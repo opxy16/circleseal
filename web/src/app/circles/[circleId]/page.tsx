@@ -8,6 +8,7 @@ import { keccak256, toBytes, type Address } from "viem";
 import type { PrivateKeyAccount } from "viem/accounts";
 import { Avatar } from "@/components/avatar";
 import { Funds } from "@/components/funds";
+import { BorderBeam } from "@/components/fx";
 import { Badge, Button, Card, CardHeader, CopyButton, LoadingCard, Notice, Stat, TxLink, WhatsAppButton } from "@/components/ui";
 import { WalletGate } from "@/components/wallet";
 import {
@@ -169,7 +170,8 @@ function Circle({ id, account }: { id: bigint; account: PrivateKeyAccount }) {
   return (
     <>
       {/* Overview */}
-      <Card className="p-0">
+      <Card className="relative overflow-hidden p-0">
+        {circle.status === "Active" && <BorderBeam duration={6} />}
         <div className="flex items-start justify-between gap-3 p-5">
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-wider text-stamp">Savings circle</p>

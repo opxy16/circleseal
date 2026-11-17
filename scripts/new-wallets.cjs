@@ -1,6 +1,6 @@
 /**
  * Creates fresh wallets for a QIE deployment and stores their keys ONLY in git-ignored env files:
- *   - deployer key -> .env                (DEPLOYER_PRIVATE_KEY)
+ *   - deployer key -> .env                (DEPLOYER_PRIVATE_KEY_<NETWORK>)
  *   - relayer key  -> web/.env.local      (RELAYER_PRIVATE_KEY_<NETWORK>)
  * It prints addresses only, never keys, and never overwrites a key that is already set.
  *
@@ -39,7 +39,10 @@ function ensureWallet(file, key, template) {
   return { address: new Wallet(r.value).address, created: r.created };
 }
 
-const deployer = ensureWallet(path.join(root, ".env"), "DEPLOYER_PRIVATE_KEY", path.join(root, ".env.example"));
+// Testnet keeps using an existing DEPLOYER_PRIVATE_KEY if one is already set.
+const envFile = path.join(root, ".env");
+const legacy = network === "qieTestnet" && /^DEPLOYER_PRIVATE_KEY=0x[0-9a-fA-F]{64}\s*$/m.test(read(envFile));
+const deployer = ensureWallet(envFile, legacy ? "DEPLOYER_PRIVATE_KEY" : `DEPLOYER_PRIVATE_KEY_${network.toUpperCase()}`, path.join(root, ".env.example"));
 const relayer = ensureWallet(path.join(root, "web", ".env.local"), `RELAYER_PRIVATE_KEY_${network.toUpperCase()}`);
 
 console.log(`\nWallets for ${network} (keys saved in git-ignored files, not shown):\n`);

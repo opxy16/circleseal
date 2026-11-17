@@ -8,6 +8,7 @@ import { addresses, chain, explorerAddress, explorerTx, isDeployed } from "@/lib
 import { naira, shortAddr } from "@/lib/local";
 import { loadStats, type Activity, type Stats } from "@/lib/stats";
 import { useQieNames } from "@/lib/qieid";
+import { NumberTicker } from "@/components/fx";
 import { nativeHasPrice, usd, useQiePrice } from "@/lib/price";
 import { formatEther } from "viem";
 import { Fuel, LineChart } from "lucide-react";
@@ -65,13 +66,16 @@ export default function StatsPage() {
         <>
           <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             {[
-              { label: "Wallets", value: stats.wallets.toLocaleString("en-NG") },
-              { label: "Transactions", value: stats.transactions.toLocaleString("en-NG") },
-              { label: "Receipts co-signed", value: stats.passbook.receipts.toLocaleString("en-NG") },
-              { label: "Savings recorded", value: naira(stats.passbook.recorded) },
+              { label: "Wallets", value: stats.wallets, money: false },
+              { label: "Transactions", value: stats.transactions, money: false },
+              { label: "Receipts co-signed", value: stats.passbook.receipts, money: false },
+              { label: "Savings recorded", value: Number(stats.passbook.recorded) / 100, money: true },
             ].map((k) => (
               <Card key={k.label}>
-                <Stat label={k.label} value={k.value} />
+                <Stat
+                  label={k.label}
+                  value={<NumberTicker value={k.value} format={(n) => (k.money ? naira(Math.round(n) * 100) : Math.round(n).toLocaleString("en-NG"))} />}
+                />
               </Card>
             ))}
           </section>

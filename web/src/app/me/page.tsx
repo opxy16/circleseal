@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import type { PrivateKeyAccount } from "viem/accounts";
 import { BookOpen, FileCheck2 } from "lucide-react";
 import { Card, CopyButton, EmptyState, LoadingCard, Notice, PageHeader, WhatsAppButton } from "@/components/ui";
+import { BorderBeam, NumberTicker } from "@/components/fx";
 import { appUrl, whatsappShare } from "@/lib/links";
 import { WalletGate } from "@/components/wallet";
-import { groupName, naira, periodLabel } from "@/lib/local";
+import { currentPeriod, groupName, naira, periodLabel, periodUnit } from "@/lib/local";
 import { groupsJoinedBy, readGroup, readMember, thriftRecord, type GroupView, type MemberView } from "@/lib/reads";
 
 export default function MePage() {
@@ -48,12 +49,15 @@ function Passbook({ account }: { account: PrivateKeyAccount }) {
   return (
     <>
       <section className="relative overflow-hidden rounded-2xl bg-brand p-6 text-brand-ink shadow-lift">
+        <BorderBeam duration={7} />
         <svg viewBox="0 0 200 200" className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 opacity-15" aria-hidden>
           <circle cx="80" cy="100" r="60" fill="none" stroke="currentColor" strokeWidth="14" />
           <circle cx="120" cy="100" r="60" fill="none" stroke="currentColor" strokeWidth="14" />
         </svg>
         <p className="text-sm opacity-80">Total saved</p>
-        <p className="mt-1 text-4xl font-semibold tabular-nums tracking-tight">{naira(totalPaid)}</p>
+        <p className="mt-1 text-4xl font-semibold tabular-nums tracking-tight sm:text-5xl">
+          <NumberTicker value={Number(totalPaid) / 100} format={(n) => naira(Math.round(n) * 100)} />
+        </p>
         <div className="mt-6 grid grid-cols-3 gap-4 text-sm">
           <div><p className="opacity-75">Received</p><p className="mt-0.5 font-semibold tabular-nums">{naira(totalReceived)}</p></div>
           <div><p className="opacity-75">Receipts</p><p className="mt-0.5 font-semibold tabular-nums">{record.contributions}</p></div>
@@ -115,6 +119,21 @@ ${appUrl(`/proof/${account.address}`)}`)}
                     <p className="text-sm text-muted">
                       {naira(group.contributionAmount)} {periodLabel(group.periodSeconds)}
                       {me.status === 3 ? " · you left" : group.closed ? " · closed" : ""}
+                    </p>
+                    <p className="text-xs">
+                      {me.status === 2 && !group.closed && (() => {
+                        const now = currentPeriod(group.createdAt, group.periodSeconds);
+                        const unit = periodUnit(group.periodSeconds);
+                        const due = now - me.lastPeriod;
+                        return due <= 0 ? (
+                          <span className="text-ok">Up to date</span>
+                        ) : (
+                          <span className="text-stamp">
+                            Next due: {unit} {me.lastPeriod + 1}
+                            {due > 1 ? ` (${due} ${unit}s to catch up)` : ""}
+                          </span>
+                        );
+                      })()}
                     </p>
                   </div>
                   <div className="text-right text-sm">

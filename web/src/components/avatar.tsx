@@ -6,6 +6,7 @@ export function Avatar({ seed, name, size = 36 }: { seed: string; name: string; 
   const initials =
     name
       .replace(/^0x/i, "")
+      .replace(/[^\p{L}\p{N}\s]/gu, " ")
       .split(/\s+/)
       .filter(Boolean)
       .slice(0, 2)

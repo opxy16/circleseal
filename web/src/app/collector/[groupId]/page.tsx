@@ -5,13 +5,13 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { keccak256, toBytes, toHex, type Address, type Hex } from "viem";
 import type { PrivateKeyAccount } from "viem/accounts";
-import { ArrowLeft, Link2, ReceiptText, RefreshCw, Send, UserPlus } from "lucide-react";
+import { ArrowLeft, BellRing, Link2, ReceiptText, RefreshCw, Send, UserPlus } from "lucide-react";
 import { Avatar } from "@/components/avatar";
 import { Badge, Button, Card, CardHeader, CopyButton, EmptyState, Field, LoadingCard, Notice, Segmented, Stat, WhatsAppButton } from "@/components/ui";
 import { WalletGate } from "@/components/wallet";
 import { contributionTypes, inviteTypes, passbookDomain, payoutTypes, type Contribution, type Payout } from "@/lib/eip712";
 import { appUrl, encodePayload, whatsappShare } from "@/lib/links";
-import { groupName, memberLabel, naira, periodLabel, saveMemberLabel, shortAddr, toKobo } from "@/lib/local";
+import { currentPeriod, groupName, memberLabel, naira, periodLabel, periodUnit, saveMemberLabel, shortAddr, toKobo } from "@/lib/local";
 import { membersOf, readGroup, readMember, type GroupView, type MemberView } from "@/lib/reads";
 import { useQieNames } from "@/lib/qieid";
 
@@ -110,7 +110,7 @@ function Group({ account, groupId }: { account: PrivateKeyAccount; groupId: bigi
         </Card>
       )}
 
-      <Members members={members} label={label} group={group} />
+      <Members members={members} label={label} group={group} groupName={name} />
       <InviteForm account={account} group={group} groupName={name} onShare={setShare} />
       {members.length > 0 && (
         <ReceiptForm account={account} group={group} groupName={name} members={members} label={label} onShare={setShare} />
@@ -122,11 +122,49 @@ function Group({ account, groupId }: { account: PrivateKeyAccount; groupId: bigi
   );
 }
 
-function Members({ members, label, group }: { members: MemberView[]; label: (m: MemberView) => string; group: GroupView }) {
+function Members({
+  members,
+  label,
+  group,
+  groupName,
+}: {
+  members: MemberView[];
+  label: (m: MemberView) => string;
+  group: GroupView;
+  groupName: string;
+}) {
   const names = useQieNames(members.map((m) => m.address));
+  const unit = periodUnit(group.periodSeconds);
+  const now = currentPeriod(group.createdAt, group.periodSeconds);
+  const behind = (m: MemberView) => Math.max(0, now - m.lastPeriod);
+  const late = members.filter((m) => behind(m) > 0);
+  const amount = naira(group.contributionAmount);
+  const groupReminder =
+    `Reminder for "${groupName}": ${amount} for ${unit} ${now} is due. ` +
+    (late.length ? `Still to pay: ${late.map((m) => `${label(m)} (${behind(m)} ${unit}${behind(m) === 1 ? "" : "s"})`).join(", ")}. ` : "") +
+    "Pay as usual and I'll send your confirm link. Thank you!";
   return (
     <Card>
-      <CardHeader title="Members" description={members.length ? `${members.length} active` : undefined} />
+      <CardHeader
+        title="Members"
+        description={
+          members.length
+            ? `${members.length} active · ${unit} ${now} now · ${members.length - late.length} of ${members.length} up to date`
+            : undefined
+        }
+        action={
+          late.length > 0 ? (
+            <a
+              href={whatsappShare(groupReminder)}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-line bg-surface px-3 text-xs font-medium shadow-card hover:bg-surface-2"
+            >
+              <BellRing className="h-3.5 w-3.5 text-stamp" aria-hidden /> Remind group
+            </a>
+          ) : undefined
+        }
+      />
       {members.length === 0 ? (
         <EmptyState icon={<UserPlus className="h-5 w-5" aria-hidden />} title="No members yet">
           Create an invite link below and send it on WhatsApp.
@@ -148,12 +186,35 @@ function Members({ members, label, group }: { members: MemberView[]; label: (m: 
                   </p>
                 </div>
               </div>
-              <div className="shrink-0 text-right">
+              <div className="flex shrink-0 flex-col items-end gap-1 text-right">
                 <p className="font-medium tabular-nums">{naira(m.totalContributed)}</p>
                 <p className="text-xs text-muted">
-                  {m.contributions} paid · last {group.periodSeconds === 86_400 ? "day" : "period"} {m.lastPeriod || "–"}
+                  {m.contributions} paid · last {unit} {m.lastPeriod || "–"}
                   {m.payouts > 0 ? ` · ${m.payouts} payout${m.payouts > 1 ? "s" : ""}` : ""}
                 </p>
+                {behind(m) === 0 ? (
+                  <Badge tone="brand">Up to date</Badge>
+                ) : (
+                  <span className="flex items-center gap-1.5">
+                    <Badge tone={behind(m) > 2 ? "bad" : "stamp"}>
+                      {behind(m)} {unit}
+                      {behind(m) === 1 ? "" : "s"} behind
+                    </Badge>
+                    <a
+                      href={whatsappShare(
+                        `Hi ${label(m)}, a friendly reminder from "${groupName}": your ${amount} for ${unit} ${m.lastPeriod + 1}` +
+                          (behind(m) > 1 ? ` to ${now}` : "") +
+                          " is due. Pay as usual and I'll send your confirm link.",
+                      )}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Send ${label(m)} a reminder on WhatsApp`}
+                      className="inline-flex h-7 items-center gap-1 rounded-md border border-line px-2 text-[11px] font-medium hover:bg-surface-2"
+                    >
+                      <BellRing className="h-3 w-3" aria-hidden /> Remind
+                    </a>
+                  </span>
+                )}
               </div>
             </li>
           ))}

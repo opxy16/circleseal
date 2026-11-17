@@ -10,7 +10,8 @@
     "deploy:local": "hardhat run scripts/deploy.ts --network localhost",
     "deploy:testnet": "hardhat run scripts/deploy.ts --network qieTestnet",
     "deploy:mainnet": "hardhat run scripts/deploy.ts --network qieMainnet",
-    "wallets:testnet": "node scripts/new-wallets.cjs qieTestnet"
+    "wallets:testnet": "node scripts/new-wallets.cjs qieTestnet",
+    "wallets:mainnet": "node scripts/new-wallets.cjs qieMainnet"
   },
   "keywords": [],
   "author": "",

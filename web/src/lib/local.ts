@@ -58,3 +58,11 @@ export const toKobo = (nairaInput: string) => BigInt(Math.round(Number(nairaInpu
 export const shortAddr = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 export const periodLabel = (seconds: number) =>
   seconds === 86_400 ? "daily" : seconds === 604_800 ? "weekly" : seconds === 2_592_000 ? "monthly" : `every ${Math.round(seconds / 86_400)} days`;
+
+/** "day" / "week" / "month" / "period" for a contribution schedule. */
+export const periodUnit = (seconds: number) =>
+  seconds === 86_400 ? "day" : seconds === 604_800 ? "week" : seconds === 2_592_000 ? "month" : "period";
+
+/** Which period a schedule is in now, counting the day the group was created as period 1. */
+export const currentPeriod = (createdAt: bigint | number, periodSeconds: number, now = Date.now() / 1000) =>
+  Math.max(1, Math.floor((now - Number(createdAt)) / periodSeconds) + 1);

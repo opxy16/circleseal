@@ -6,6 +6,7 @@ import QRCode from "qrcode";
 import { useEffect, useState } from "react";
 import { getAddress, isAddress, type Address } from "viem";
 import { Badge, Button, Card, CardHeader, CopyButton, LoadingCard, Notice, Stat } from "@/components/ui";
+import { BorderBeam } from "@/components/fx";
 import { fmt, tokenInfo, type TokenInfo } from "@/lib/circle";
 import { addresses, chain, explorerAddress } from "@/lib/config";
 import { appUrl } from "@/lib/links";
@@ -84,6 +85,7 @@ function ProofView({ address }: { address: Address }) {
       {/* Certificate header */}
       <section className="relative overflow-hidden rounded-2xl border border-line bg-surface p-6 shadow-card sm:p-8 print:shadow-none">
         <div className="hero-glow pointer-events-none absolute inset-0 print:hidden" aria-hidden />
+        <span className="print:hidden"><BorderBeam duration={9} /></span>
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-wider text-brand">AjoProof savings record</p>

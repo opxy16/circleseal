@@ -4,8 +4,11 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-// Never commit a real key. Put it in .env (which is git-ignored).
-const accounts = process.env.DEPLOYER_PRIVATE_KEY ? [process.env.DEPLOYER_PRIVATE_KEY] : [];
+// Never commit a real key. Keys live in .env (git-ignored), one per network, so a testnet wallet
+// is never used with real money. DEPLOYER_PRIVATE_KEY is only a fallback for testnet.
+const key = (k?: string) => (k ? [k] : []);
+const testnetAccounts = key(process.env.DEPLOYER_PRIVATE_KEY_QIETESTNET || process.env.DEPLOYER_PRIVATE_KEY);
+const mainnetAccounts = key(process.env.DEPLOYER_PRIVATE_KEY_QIEMAINNET);
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -21,12 +24,12 @@ const config: HardhatUserConfig = {
     qieTestnet: {
       url: process.env.QIE_TESTNET_RPC || "https://rpc1testnet.qie.digital",
       chainId: 1983,
-      accounts,
+      accounts: testnetAccounts,
     },
     qieMainnet: {
       url: process.env.QIE_MAINNET_RPC || "https://rpc1mainnet.qie.digital",
       chainId: 1990,
-      accounts,
+      accounts: mainnetAccounts,
     },
   },
   // Source verification on QIE's Blockscout explorers (Etherscan-compatible API; any key string works).

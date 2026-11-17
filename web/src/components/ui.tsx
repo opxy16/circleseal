@@ -19,7 +19,7 @@ export function Button({
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant; size?: "sm" | "md" | "lg"; loading?: boolean }) {
   const styles: Record<ButtonVariant, string> = {
-    primary: "bg-brand text-brand-ink shadow-card hover:bg-brand-strong",
+    primary: "shimmer bg-brand text-brand-ink shadow-card hover:-translate-y-px hover:bg-brand-strong hover:shadow-lift",
     secondary: "bg-surface-2 text-ink hover:bg-line",
     outline: "border border-line bg-surface text-ink shadow-card hover:bg-surface-2",
     ghost: "text-brand hover:bg-brand-soft",
@@ -44,7 +44,7 @@ export function Button({
 }
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <section className={cx("rounded-xl border border-line bg-surface p-5 shadow-card", className)}>{children}</section>;
+  return <section className={cx("rounded-2xl border border-line bg-surface p-5 shadow-card transition-shadow duration-300 hover:shadow-lift", className)}>{children}</section>;
 }
 
 export function CardHeader({ title, description, action, eyebrow }: { title: ReactNode; description?: ReactNode; action?: ReactNode; eyebrow?: ReactNode }) {
@@ -62,10 +62,11 @@ export function CardHeader({ title, description, action, eyebrow }: { title: Rea
 
 export function PageHeader({ title, description, eyebrow, action }: { title: ReactNode; description?: ReactNode; eyebrow?: ReactNode; action?: ReactNode }) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div className="min-w-0">
-        {eyebrow && <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-brand">{eyebrow}</p>}
-        <h1 className="text-balance text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h1>
+    <div className="relative flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div aria-hidden className="hero-glow pointer-events-none absolute -inset-x-16 -top-16 bottom-0 -z-10 opacity-80 print:hidden" />
+      <div className="reveal reveal-in min-w-0">
+        {eyebrow && <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-brand">{eyebrow}</p>}
+        <h1 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
         {description && <p className="mt-2 max-w-prose text-pretty text-sm text-muted sm:text-base">{description}</p>}
       </div>
       {action}
