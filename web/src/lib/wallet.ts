@@ -57,7 +57,7 @@ export async function createWallet(pin: string): Promise<PrivateKeyAccount> {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
   } catch {
-    throw new Error("This browser won't let AjoProof save your wallet. Turn off private browsing and try again.");
+    throw new Error("This browser won't let CircleSeal save your wallet. Turn off private browsing and try again.");
   }
   return account;
 }

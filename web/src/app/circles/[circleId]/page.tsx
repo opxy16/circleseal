@@ -160,7 +160,7 @@ function Circle({ id, account }: { id: bigint; account: PrivateKeyAccount }) {
   };
 
   const inviteUrl = appUrl(`/circles/${circle.id}${name ? `?n=${encodeURIComponent(name)}` : ""}`);
-  const inviteText = `Join my savings circle "${label}" on AjoProof: ${fmt(circle.contributionAmount, token)} per round, ${circle.maxMembers} members, ${roundLabel(circle.roundDuration)}. The rules are enforced by code.`;
+  const inviteText = `Join my savings circle "${label}" on CircleSeal: ${fmt(circle.contributionAmount, token)} per round, ${circle.maxMembers} members, ${roundLabel(circle.roundDuration)}. The rules are enforced by code.`;
 
   const withdrawable =
     me && !me.withdrawn

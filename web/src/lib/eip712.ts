@@ -2,7 +2,7 @@ import type { Address, Hex } from "viem";
 import { addresses, chain } from "./config";
 
 export const passbookDomain = () =>
-  ({ name: "AjoProof", version: "1", chainId: chain.id, verifyingContract: addresses.passbook }) as const;
+  ({ name: "CircleSeal", version: "1", chainId: chain.id, verifyingContract: addresses.passbook }) as const;
 
 export const forwarderDomain = () =>
   ({ name: "AjoForwarder", version: "1", chainId: chain.id, verifyingContract: addresses.forwarder }) as const;

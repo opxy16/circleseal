@@ -1,15 +1,15 @@
-# AjoProof
+# CircleSeal
 
-**Your ajo, verifiable.** Co-signed thrift receipts nobody can change or deny, and savings circles enforced by code, on the QIE blockchain.
+**Your savings circle, sealed on-chain.** Co-signed savings receipts nobody can change or deny, and savings circles enforced by code, on the QIE blockchain.
 
-Ajo, esusu and adashe are rotating savings groups used by millions of people across West Africa. They run on trust, and that trust breaks in familiar ways. A collector disappears with the money. A member insists "I paid" and the collector says "you didn't". Years of disciplined saving leave no record a lender will accept.
+People all over the world save together in rotating savings groups: ajo in Nigeria, susu in Ghana, tontines in Cameroon, chamas in Kenya, tandas in Mexico, stokvels in South Africa, chit funds in India. They run on trust, and that trust breaks in familiar ways. A collector disappears with the money. A member insists "I paid" and the collector says "you didn't". Years of disciplined saving leave no record a lender will accept.
 
-AjoProof keeps the ajo people already run and adds proof:
+CircleSeal keeps the savings groups people already run and adds proof:
 
 | | **Passbook mode** | **Circle mode** |
 |---|---|---|
-| For | Cash and bank-transfer ajo with a collector | Groups saving in a dollar stablecoin |
-| Money | Never touches AjoProof | Held by an open-source contract, never by us |
+| For | Cash and bank-transfer savings groups with a collector | Groups saving in a dollar stablecoin |
+| Money | Never touches CircleSeal | Held by an open-source contract, never by us |
 | What goes on-chain | Receipts signed by **both** collector and member | Every payment, payout, bond and missed round |
 | Member needs | A phone browser. No app, no crypto, no fees | QUSDC plus a little QIE for fees |
 
@@ -24,7 +24,7 @@ sequenceDiagram
     autonumber
     participant C as Collector (phone)
     participant M as Member (phone)
-    participant R as AjoProof relayer
+    participant R as CircleSeal relayer
     participant P as AjoPassbook (QIE)
     C->>C: Create group (name stays on the phone, only its hash goes on-chain)
     C->>M: Invite link on WhatsApp (EIP-712 signed, single-use, expires in 7 days)
@@ -55,7 +55,7 @@ flowchart LR
     H -->|yes| I[Everyone withdraws bond + leftovers<br/>reserve shared by members who never missed]
 ```
 
-**Payout holdback** closes the classic ajo loophole, where someone takes the pot early and stops paying. When a member receives the pot, the contract keeps back whatever part of their remaining contributions their bond doesn't already cover. It then prepays their next rounds automatically. Walking away after being paid can't cost anyone else a cent. The test suite proves this, and `npm run demo` shows it happening.
+**Payout holdback** closes the classic savings-circle loophole, where someone takes the pot early and stops paying. When a member receives the pot, the contract keeps back whatever part of their remaining contributions their bond doesn't already cover. It then prepays their next rounds automatically. Walking away after being paid can't cost anyone else a cent. The test suite proves this, and `npm run demo` shows it happening.
 
 ---
 
@@ -94,11 +94,11 @@ flowchart TB
 
 ## Built on the QIE ecosystem
 
-| QIE building block | How AjoProof uses it |
+| QIE building block | How CircleSeal uses it |
 |---|---|
-| **QIE blockchain** | All three contracts live on QIE. Gas is cheap enough that AjoProof can pay every member's fees. |
+| **QIE blockchain** | All three contracts live on QIE. Gas is cheap enough that CircleSeal can pay every member's fees. |
 | **QIE ID (.qie names)** | Members show as `tolu.qie` instead of `0x9BCE…`, in the circle rotation, collector member lists, the stats feed and the wallet badge. Savings proof links work by name: `/proof/tolu.qie`. Lookups go through QIE's official read-only MCP service ([`qieid-server.ts`](web/src/lib/qieid-server.ts)). |
-| **QIE Oracle** | The live QIE/USDT price feed (`0x3Bc6…7D17`, AggregatorV3) prices the network fees AjoProof pays for members, and circle wallets' fee balances, in dollars ([`/api/qie-price`](web/src/app/api/qie-price/route.ts)). |
+| **QIE Oracle** | The live QIE/USDT price feed (`0x3Bc6…7D17`, AggregatorV3) prices the network fees CircleSeal pays for members, and circle wallets' fee balances, in dollars ([`/api/qie-price`](web/src/app/api/qie-price/route.ts)). |
 | **QIEDEX** | A circle wallet low on QIE can swap 1 QUSDC for QIE in-app. The quote comes from QIEDEX's API, but the app builds the `swapExactTokensForETH` call itself against the official router, so it never signs third-party calldata ([`qiedex.ts`](web/src/lib/qiedex.ts)). |
 | **QUSDC** | The currency of circle mode on mainnet (`0x3F43…5DA5`). |
 
@@ -198,7 +198,7 @@ Network details: mainnet chain 1990 (`https://rpc1mainnet.qie.digital`), testnet
 
 ## Host the app (Vercel)
 
-1. Import `opxy16/ajoproof` at https://vercel.com/new and set **Root Directory** to `web`. The framework is detected as Next.js.
+1. Import `opxy16/circleseal` at https://vercel.com/new and set **Root Directory** to `web`. The framework is detected as Next.js.
 2. Add these environment variables:
 
    | Variable | Value |

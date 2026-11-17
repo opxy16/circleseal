@@ -1,7 +1,7 @@
 /**
  * SERVER ONLY. The relayer pays gas for members and collectors.
  * Safety rules:
- *  - Only calls AjoProof's own contracts, and only an allowlist of functions.
+ *  - Only calls CircleSeal's own contracts, and only an allowlist of functions.
  *  - Simulates every call first, so it never pays for a transaction that would fail.
  *  - Sends one transaction at a time and waits for it (QIE rejects out-of-order nonces).
  */
@@ -149,7 +149,7 @@ export async function relayPayout(p: Payout, collectorSig: Hex, memberSig: Hex):
 }
 
 export async function relayForward(req: ForwardRequest, signature: Hex): Promise<Hex> {
-  if (getAddress(req.to) !== getAddress(addresses.passbook)) throw new RelayError("Only AjoProof calls can be relayed.");
+  if (getAddress(req.to) !== getAddress(addresses.passbook)) throw new RelayError("Only CircleSeal calls can be relayed.");
   if (req.value !== 0n) throw new RelayError("Relayed calls can't send value.");
   if (req.gas > MAX_FORWARD_GAS) throw new RelayError("Requested gas is too high.");
   if (req.deadline < Math.floor(Date.now() / 1000)) throw new RelayError("This request has expired. Please try again.");

@@ -88,7 +88,7 @@ function ProofView({ address }: { address: Address }) {
         <span className="print:hidden"><BorderBeam duration={9} /></span>
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-wider text-brand">AjoProof savings record</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-brand">CircleSeal savings record</p>
             <h1 className="mt-2 text-balance text-3xl font-semibold tracking-tight">
               {empty || !duration ? "No savings recorded yet" : `Saving for ${duration}`}
             </h1>
@@ -132,14 +132,14 @@ function ProofView({ address }: { address: Address }) {
       </section>
 
       {empty && (
-        <Notice>This wallet hasn&apos;t recorded any AjoProof savings on {chain.name} yet.</Notice>
+        <Notice>This wallet hasn&apos;t recorded any CircleSeal savings on {chain.name} yet.</Notice>
       )}
 
       {/* Groups */}
       {groups.length > 0 && (
         <Card>
           <CardHeader
-            title={<span className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-brand" aria-hidden /> Ajo groups</span>}
+            title={<span className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-brand" aria-hidden /> Savings groups</span>}
             description="Each payment below was confirmed by both this member and their collector."
           />
           <ul className="-my-2 divide-y divide-line">
@@ -204,8 +204,8 @@ function ProofView({ address }: { address: Address }) {
         />
         <ul className="flex flex-col gap-3 text-sm">
           <li>
-            Every figure on this page was read directly from the AjoProof contract on {chain.name}
-            {checkedAt && ` at ${checkedAt.toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short" })}`}. AjoProof can&apos;t
+            Every figure on this page was read directly from the CircleSeal contract on {chain.name}
+            {checkedAt && ` at ${checkedAt.toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short" })}`}. CircleSeal can&apos;t
             edit it, and neither can the member.
           </li>
           <li>A payment only counts when both the member and the collector signed the same receipt, so nobody can add payments on their own.</li>

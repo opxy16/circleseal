@@ -93,7 +93,7 @@ function Passbook({ account }: { account: PrivateKeyAccount }) {
               Open my proof page
             </Link>
             <WhatsAppButton
-              href={whatsappShare(`My savings record on AjoProof, verified on the QIE blockchain:
+              href={whatsappShare(`My savings record on CircleSeal, verified on the QIE blockchain:
 ${appUrl(`/proof/${account.address}`)}`)}
               label="Share"
             />

@@ -16,14 +16,14 @@ const isActive = (path: string, href: string) => (href === "/" ? path === "/" : 
 
 export function Logo() {
   return (
-    <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight" aria-label="AjoProof home">
+    <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight" aria-label="CircleSeal home">
       <svg viewBox="0 0 32 32" className="h-8 w-8" aria-hidden>
         <rect width="32" height="32" rx="9" className="fill-brand" />
         <circle cx="13" cy="16" r="6.5" fill="none" stroke="currentColor" strokeWidth="2.2" className="text-brand-ink" opacity="0.55" />
         <circle cx="19" cy="16" r="6.5" fill="none" stroke="currentColor" strokeWidth="2.2" className="text-brand-ink" />
         <path d="m16.2 16.2 1.9 1.9 3.6-3.8" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-brand-ink" />
       </svg>
-      <span className="text-[17px]">AjoProof</span>
+      <span className="text-[17px]">CircleSeal</span>
     </Link>
   );
 }
@@ -95,7 +95,7 @@ export function Footer({ network }: { network: string }) {
       <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1">
           <Logo />
-          <p className="text-xs">Co-signed thrift receipts and code-enforced savings circles on QIE.</p>
+          <p className="text-xs">Co-signed savings receipts and code-enforced savings circles on QIE.</p>
         </div>
         <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs">
           <Link href="/stats" className="text-brand hover:underline">

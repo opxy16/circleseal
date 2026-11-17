@@ -1,5 +1,5 @@
 /**
- * AjoProof walkthrough on a local, throwaway blockchain (Hardhat in-memory network).
+ * CircleSeal walkthrough on a local, throwaway blockchain (Hardhat in-memory network).
  * Run with:  npx hardhat run scripts/demo.ts
  * Nothing here touches QIE or any real money.
  */
@@ -40,7 +40,7 @@ async function main() {
   const chainId = (await ethers.provider.getNetwork()).chainId;
 
   console.log("");
-  console.log("  AjoProof demo  |  network: " + network.name + " (local, throwaway)  |  chain " + chainId);
+  console.log("  CircleSeal demo  |  network: " + network.name + " (local, throwaway)  |  chain " + chainId);
   console.log("  Cast: Mama Ngozi (collector), Ada, Bayo, Chidi, Emeka (members), Relayer (pays gas)");
 
   // ---------------------------------------------------------------------
@@ -56,7 +56,7 @@ async function main() {
   title("PART 1  -  PASSBOOK MODE  (members pay cash; nobody needs crypto)");
   ok("Contracts deployed: AjoPassbook " + short(await passbook.getAddress()) + ", AjoForwarder " + short(await forwarder.getAddress()));
 
-  const domain = { name: "AjoProof", version: "1", chainId, verifyingContract: await passbook.getAddress() };
+  const domain = { name: "CircleSeal", version: "1", chainId, verifyingContract: await passbook.getAddress() };
   const contributionTypes = {
     Contribution: [
       { name: "groupId", type: "uint256" },

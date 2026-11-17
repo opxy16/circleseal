@@ -38,7 +38,7 @@ export default function CirclesPage() {
       <PageHeader
         eyebrow="Circle mode"
         title="Savings circles"
-        description="A rotating ajo in a dollar stablecoin, run by code instead of a collector. Everyone posts a bond and pays each round, and the pot goes to a different member each time."
+        description="A rotating savings circle, like an ajo, susu or tanda, in a dollar stablecoin, run by code instead of a collector. Everyone posts a bond and pays each round, and the pot goes to a different member each time."
       />
       <WalletGate purpose="Your wallet holds your circle savings.">{(account) => <Circles account={account} />}</WalletGate>
     </div>

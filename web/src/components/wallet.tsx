@@ -80,7 +80,7 @@ export function WalletGate({ children, purpose }: { children: (account: PrivateK
             <ShieldCheck className="h-5 w-5" aria-hidden />
           </span>
           <div>
-          <h2 className="text-lg font-semibold tracking-tight">Set up your AjoProof wallet</h2>
+          <h2 className="text-lg font-semibold tracking-tight">Set up your CircleSeal wallet</h2>
           <p className="mt-1 text-sm text-muted">
             {purpose ?? "It takes a few seconds."} It lives in this browser, so there&apos;s no app to install.
           </p>

@@ -103,7 +103,7 @@ function JoinCard({ account, invite }: { account: PrivateKeyAccount; invite: Inv
           <Users className="h-6 w-6" aria-hidden />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold uppercase tracking-wider text-stamp">Ajo group</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-stamp">Savings group</p>
           <h2 className="truncate text-xl font-semibold tracking-tight">{invite.name}</h2>
           {group && (
             <p className="text-sm text-muted">
@@ -143,7 +143,7 @@ function JoinCard({ account, invite }: { account: PrivateKeyAccount; invite: Inv
           <ul className="flex flex-col gap-3 text-sm">
             <li className="flex gap-3"><HandCoins className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden /> Keep paying your collector the usual way, in cash or by transfer.</li>
             <li className="flex gap-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden /> Confirm each payment with one tap. Nobody can fake or delete it.</li>
-            <li className="flex gap-3"><Coins className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden /> It&apos;s free: AjoProof pays the network fee.</li>
+            <li className="flex gap-3"><Coins className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden /> It&apos;s free: CircleSeal pays the network fee.</li>
           </ul>
           {error && <Notice tone="bad">{error}</Notice>}
           <Button onClick={join} loading={busy} size="lg">

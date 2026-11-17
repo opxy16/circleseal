@@ -3,7 +3,7 @@
 import { AlertTriangle, Check, CheckCircle2, Copy, ExternalLink, Info, Loader2, Stamp } from "lucide-react";
 import { useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from "react";
 
-/* AjoProof UI kit, in the style of shadcn/ui (MIT): small, composable, token-driven. */
+/* CircleSeal UI kit, in the style of shadcn/ui (MIT): small, composable, token-driven. */
 
 const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(" ");
 

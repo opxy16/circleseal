@@ -8,8 +8,8 @@ import { addresses } from "./config";
 import { groupsJoinedBy, readGroup, readMember, thriftRecord, type GroupView, type MemberView } from "./reads";
 
 /**
- * A member's savings proof: everything here is read live from AjoProof's contracts for one
- * wallet address, so a lender can check it themselves. Nothing comes from AjoProof's servers.
+ * A member's savings proof: everything here is read live from CircleSeal's contracts for one
+ * wallet address, so a lender can check it themselves. Nothing comes from CircleSeal's servers.
  */
 
 export type GroupProof = {

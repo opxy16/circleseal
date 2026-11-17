@@ -244,7 +244,7 @@ function InviteForm({ account, group, groupName, onShare }: { account: PrivateKe
       onShare({
         title: `Invite link for ${label}`,
         url,
-        message: `Join our ajo "${groupName}" on AjoProof. Every payment you make gets a receipt we both sign. Tap to join (works once, expires in 7 days):`,
+        message: `Join our savings group "${groupName}" on CircleSeal. Every payment you make gets a receipt we both sign. Tap to join (works once, expires in 7 days):`,
       });
       setWho("");
     } catch (err) {
@@ -327,7 +327,7 @@ function ReceiptForm({
         url,
         message:
           kind === "contribution"
-            ? `I've recorded your ${naira(toKobo(amount))} ajo payment (${groupName}). Tap to confirm so we both have the receipt:`
+            ? `I've recorded your ${naira(toKobo(amount))} savings payment (${groupName}). Tap to confirm so we both have the receipt:`
             : `I've paid you ${naira(toKobo(amount))} from "${groupName}". Tap to confirm you received it:`,
       });
     } catch (err) {

@@ -24,7 +24,7 @@ export default function CollectorPage() {
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
       <PageHeader
         eyebrow="Passbook mode · Collector"
-        title="Your ajo groups"
+        title="Your savings groups"
         description="Create a group, invite members with a link, and turn every payment into a receipt you both sign."
       />
       <WalletGate purpose="Your wallet signs your groups' receipts.">{(account) => <Collector account={account} />}</WalletGate>
@@ -112,7 +112,7 @@ function Collector({ account }: { account: PrivateKeyAccount }) {
       <Card>
         <CardHeader title="Create a group" description="Members join with an invite link. No app, no crypto, no fees for them." />
         <form className="flex flex-col gap-4" onSubmit={create}>
-          <Field id="group-name" label="Group name" placeholder="e.g. Yaba Market Daily Ajo" value={name} onChange={(e) => setName(e.target.value)} hint="Only a fingerprint (hash) of the name goes on-chain." />
+          <Field id="group-name" label="Group name" placeholder="e.g. Market Traders Daily Savings" value={name} onChange={(e) => setName(e.target.value)} hint="Only a fingerprint (hash) of the name goes on-chain." />
           <Field id="group-amount" label="Each contribution" prefix="₦" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} />
           <Segmented label="How often" options={PERIODS.map((p) => ({ label: p.label, value: p.seconds }))} value={period} onChange={setPeriod} />
           {error && <Notice tone="bad">{error}</Notice>}

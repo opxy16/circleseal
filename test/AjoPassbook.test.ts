@@ -50,7 +50,7 @@ async function deployFixture() {
   )) as unknown as AjoPassbook;
   const chainId = (await ethers.provider.getNetwork()).chainId;
   const domain = {
-    name: "AjoProof",
+    name: "CircleSeal",
     version: "1",
     chainId,
     verifyingContract: await passbook.getAddress(),

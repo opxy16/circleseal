@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /*
- * AjoProof design tokens (shadcn/ui-style: semantic CSS variables, light + dark).
+ * CircleSeal design tokens (shadcn/ui-style: semantic CSS variables, light + dark).
  * Brand: deep emerald (trust, money). Accent: receipt-stamp amber.
  */
 :root {

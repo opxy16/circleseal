@@ -7,7 +7,7 @@
  *   node scripts/new-wallets.cjs qieTestnet
  *
  * Fund both printed addresses with a little QIE (testnet: https://www.qie.digital/faucet).
- * Use these wallets only for AjoProof; never put personal funds in them.
+ * Use these wallets only for CircleSeal; never put personal funds in them.
  */
 const fs = require("fs");
 const path = require("path");

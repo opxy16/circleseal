@@ -63,18 +63,19 @@ function Hero() {
           </Reveal>
           <Reveal delay={80}>
             <h1 className="text-balance text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
-              Your ajo, <GradientText>verifiable.</GradientText>
+              Your savings circle, <GradientText>sealed.</GradientText>
             </h1>
           </Reveal>
           <Reveal delay={160}>
             <p className="max-w-xl text-pretty text-lg text-muted sm:text-xl">
-              Keep saving the way you already do. Every contribution becomes a receipt signed by you <em>and</em> your
-              collector, recorded on QIE so nobody can fake it, change it or deny it.
+              Ajo in Nigeria, susu in Ghana, tontines in Cameroon, chamas in Kenya, tandas in Mexico: people everywhere save
+              together on trust. Keep saving the way you already do. Every contribution becomes a receipt signed by you{" "}
+              <em>and</em> your collector, sealed on QIE so nobody can fake it, change it or deny it.
             </p>
           </Reveal>
           {!isDeployed && (
             <p className="rounded-lg border border-stamp-soft bg-stamp-soft px-3 py-2 text-sm">
-              AjoProof&apos;s contracts are being deployed to QIE right now. Check back shortly to try it live.
+              CircleSeal&apos;s contracts are being deployed to QIE right now. Check back shortly to try it live.
             </p>
           )}
           <Reveal delay={240} className="w-full sm:w-auto">
@@ -121,7 +122,7 @@ const FEED = [
 /** Illustration of the app on a phone, with a live-looking activity feed. */
 function HeroPhone() {
   return (
-    <div className="relative mx-auto w-full max-w-sm" aria-label="Illustration of the AjoProof app">
+    <div className="relative mx-auto w-full max-w-sm" aria-label="Illustration of the CircleSeal app">
       <PhoneFrame className="float-slow">
         <div className="flex h-full flex-col gap-3 px-4 pb-4 pt-12">
           <div className="relative overflow-hidden rounded-2xl bg-brand p-4 text-brand-ink">
@@ -180,6 +181,7 @@ function HeroPhone() {
 
 function TrustMarquee() {
   const chips = [
+    "Ajo · Susu · Tontine · Chama · Tanda · Stokvel",
     "Two signatures on every receipt",
     "Never holds your naira",
     "Gas-free for members",
@@ -233,13 +235,13 @@ function BeforeAfter() {
   ];
   return (
     <section>
-      <SectionTitle eyebrow="Why it matters" title={<>Ajo runs on trust. <GradientText>Now it runs on proof.</GradientText></>} />
+      <SectionTitle eyebrow="Why it matters" title={<>Savings groups run on trust. <GradientText>Now they run on proof.</GradientText></>} />
       <div className="grid gap-5 md:grid-cols-2">
         <Reveal>
           <div className="h-full rounded-3xl border border-line bg-surface p-7 shadow-card">
             <div className="mb-5 flex items-center gap-3">
               <span className="grid h-11 w-11 place-items-center rounded-xl bg-bad-soft text-bad"><NotebookPen className="h-5 w-5" aria-hidden /></span>
-              <h3 className="text-lg font-semibold">The notebook ajo</h3>
+              <h3 className="text-lg font-semibold">The notebook way</h3>
             </div>
             <ul className="flex flex-col gap-3.5">
               {before.map((b) => (
@@ -253,7 +255,7 @@ function BeforeAfter() {
             <BorderBeam duration={8} />
             <div className="mb-5 flex items-center gap-3">
               <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand text-brand-ink"><ShieldCheck className="h-5 w-5" aria-hidden /></span>
-              <h3 className="text-lg font-semibold">With AjoProof</h3>
+              <h3 className="text-lg font-semibold">With CircleSeal</h3>
             </div>
             <ul className="flex flex-col gap-3.5">
               {after.map((a) => (
@@ -296,12 +298,12 @@ function Bento() {
     <section>
       <SectionTitle
         eyebrow="Two ways to save"
-        title={<>Keep your ajo. <GradientText>Add proof.</GradientText></>}
+        title={<>Keep your circle. <GradientText>Add proof.</GradientText></>}
         body="Start with receipts for the group you already have, or run a dollar circle where the rules are enforced by code."
       />
       <div className="grid auto-rows-[minmax(220px,auto)] gap-5 md:grid-cols-3">
         <Tile className="md:col-span-2">
-          <TileHead icon={BookOpen} title="Passbook mode: two signatures, one truth" body="Cash and transfer ajo with co-signed receipts. The collector records it, the member confirms it, and QIE keeps it forever." />
+          <TileHead icon={BookOpen} title="Passbook mode: two signatures, one truth" body="Cash and transfer savings groups with co-signed receipts. The collector records it, the member confirms it, and QIE keeps it forever." />
           <div className="mt-6 flex flex-wrap items-center gap-3 text-sm">
             {["Collector signs", "Member confirms", "Recorded on QIE"].map((s, i) => (
               <span key={s} className="flex items-center gap-3">
@@ -315,7 +317,7 @@ function Bento() {
           </div>
         </Tile>
         <Tile delay={80}>
-          <TileHead icon={Fuel} title="Gas-free for members" body="No crypto to buy, ever. AjoProof's relayer pays every passbook fee." />
+          <TileHead icon={Fuel} title="Gas-free for members" body="No crypto to buy, ever. CircleSeal's relayer pays every passbook fee." />
           <p className="mt-5 text-4xl font-semibold tracking-tight text-brand">₦0</p>
           <p className="text-xs text-muted">what members pay in network fees</p>
         </Tile>
@@ -392,7 +394,7 @@ function HowItWorks() {
 
 function BuiltOnQie() {
   const items = [
-    { icon: ShieldCheck, name: "QIE blockchain", body: "Fast, cheap finality, so AjoProof can pay every member's fees." },
+    { icon: ShieldCheck, name: "QIE blockchain", body: "Fast, cheap finality, so CircleSeal can pay every member's fees." },
     { icon: Wallet, name: "QIE ID", body: "Members show up as tolu.qie, and proof links work by name." },
     { icon: LineChart, name: "QIE Oracle", body: "Live QIE/USDT price turns fees and balances into dollars." },
     { icon: RefreshCcw, name: "QIEDEX", body: "Swap QUSDC for QIE in-app so circle wallets pay their own fees." },
@@ -422,8 +424,8 @@ function BuiltOnQie() {
 
 function Faq() {
   const items = [
-    { q: "Do members need crypto or a crypto app?", a: "No. A wallet is created in the browser, locked with a 6-digit PIN, and AjoProof pays the network fees for passbook actions." },
-    { q: "Does AjoProof hold our money?", a: "Not in passbook mode: your naira never touches AjoProof. In circle mode, the stablecoin pot is held by the open-source circle contract, never by us, and only its fixed rules can move it." },
+    { q: "Do members need crypto or a crypto app?", a: "No. A wallet is created in the browser, locked with a 6-digit PIN, and CircleSeal pays the network fees for passbook actions." },
+    { q: "Does CircleSeal hold our money?", a: "Not in passbook mode: your naira never touches CircleSeal. In circle mode, the stablecoin pot is held by the open-source circle contract, never by us, and only its fixed rules can move it." },
     { q: "What exactly goes on the blockchain?", a: "Amounts, dates, an opaque member code and both signatures. Group names are stored only as a fingerprint, and no names or phone numbers are ever published." },
     { q: "Can a collector fake or edit a receipt?", a: "No. A receipt needs the member's signature too, each payment reference can be used once, and recorded receipts can't be changed or deleted." },
     { q: "What stops someone taking the circle pot and leaving?", a: "The payout holdback. When you're paid early, part of the pot prepays your remaining rounds; anything you still skip comes out of your own bond." },

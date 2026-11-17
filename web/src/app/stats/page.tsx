@@ -50,7 +50,7 @@ export default function StatsPage() {
       <PageHeader
         eyebrow={`Live on ${chain.name}`}
         title="On-chain activity"
-        description="Every number on this page is read directly from AjoProof's contracts, with no database in between. Anyone can check them on the explorer."
+        description="Every number on this page is read directly from CircleSeal's contracts, with no database in between. Anyone can check them on the explorer."
         action={
           <Button variant="outline" onClick={load} loading={busy}>
             {!busy && <RefreshCw className="h-4 w-4" aria-hidden />} Refresh
@@ -58,9 +58,9 @@ export default function StatsPage() {
         }
       />
 
-      {!isDeployed && <Notice tone="stamp">AjoProof&apos;s contracts are being deployed to QIE right now. Check back shortly.</Notice>}
+      {!isDeployed && <Notice tone="stamp">CircleSeal&apos;s contracts are being deployed to QIE right now. Check back shortly.</Notice>}
       {error && <Notice tone="bad">{error}</Notice>}
-      {!stats && !error && <LoadingCard label="Reading every AjoProof event from the chain…" />}
+      {!stats && !error && <LoadingCard label="Reading every CircleSeal event from the chain…" />}
 
       {stats && (
         <>
@@ -85,7 +85,7 @@ export default function StatsPage() {
               <CardHeader
                 eyebrow="Passbook mode"
                 title={<span className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-brand" aria-hidden /> Co-signed receipts</span>}
-                description="Cash and transfer ajo, recorded with both signatures."
+                description="Cash and transfer savings groups, recorded with both signatures."
               />
               <dl className="grid grid-cols-2 gap-4">
                 <Stat label="Groups" value={stats.passbook.groups} />
@@ -113,7 +113,7 @@ export default function StatsPage() {
             <Card>
               <CardHeader
                 eyebrow="Gas-free for members"
-                title={<span className="flex items-center gap-2"><Fuel className="h-4 w-4 text-brand" aria-hidden /> Network fees AjoProof paid</span>}
+                title={<span className="flex items-center gap-2"><Fuel className="h-4 w-4 text-brand" aria-hidden /> Network fees CircleSeal paid</span>}
                 description="Members never buy crypto: the relayer pays every passbook transaction's fee."
               />
               <div className="grid grid-cols-2 gap-4">

@@ -172,7 +172,7 @@ contract AjoPassbook is EIP712, ERC2771Context {
     // Construction
     // ---------------------------------------------------------------------
 
-    constructor(address trustedForwarder) EIP712("AjoProof", "1") ERC2771Context(trustedForwarder) {}
+    constructor(address trustedForwarder) EIP712("CircleSeal", "1") ERC2771Context(trustedForwarder) {}
 
     // ---------------------------------------------------------------------
     // Group management (callable directly or gaslessly via the forwarder)

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Motion and visual effects, written for AjoProof in the spirit of open-source libraries like
+ * Motion and visual effects, written for CircleSeal in the spirit of open-source libraries like
  * Magic UI (MIT): border beam, number ticker, marquee, scroll reveal, animated list, phone frame.
  * Pure CSS + React, no animation dependency, and everything respects prefers-reduced-motion.
  */

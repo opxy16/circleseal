@@ -5,7 +5,7 @@ import { NumberTicker } from "./fx";
 import { chain, isDeployed } from "@/lib/config";
 import { loadStats, type Stats } from "@/lib/stats";
 
-/** Real, live counters read from AjoProof's contracts (no made-up numbers). */
+/** Real, live counters read from CircleSeal's contracts (no made-up numbers). */
 export function LiveStrip() {
   const [s, setS] = useState<Stats | null>(null);
   useEffect(() => {
@@ -27,7 +27,7 @@ export function LiveStrip() {
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ok opacity-60" />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-ok" />
         </span>
-        Live from AjoProof&apos;s contracts on {chain.name}
+        Live from CircleSeal&apos;s contracts on {chain.name}
       </div>
       <div className="grid grid-cols-2 divide-line md:grid-cols-4 md:divide-x">
         {items.map((it) => (

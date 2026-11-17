@@ -7,7 +7,7 @@ import { getLogsChunked, publicClient } from "./chain";
 import { addresses } from "./config";
 
 /**
- * Public, wallet-free statistics read straight from AjoProof's contract events.
+ * Public, wallet-free statistics read straight from CircleSeal's contract events.
  * Nothing here comes from a database: anyone can recompute every number from the chain.
  */
 
@@ -27,7 +27,7 @@ export type Stats = {
   circle: { circles: number; members: number; contributions: number; contributed: bigint; paidOut: bigint; covered: number };
   wallets: number;
   transactions: number;
-  /** Network fees AjoProof's relayer paid so passbook members never needed crypto. */
+  /** Network fees CircleSeal's relayer paid so passbook members never needed crypto. */
   sponsored: { transactions: number; fees: bigint; complete: boolean };
   recent: Activity[];
 };
@@ -75,7 +75,7 @@ export async function loadStats(): Promise<Stats> {
     index: e.log.logIndex ?? 0,
   });
   const all: Activity[] = [
-    ...groups.map((e) => act(e, { kind: "group", text: `Ajo group #${e.args.groupId} created`, who: e.args.collector as Address })),
+    ...groups.map((e) => act(e, { kind: "group", text: `Savings group #${e.args.groupId} created`, who: e.args.collector as Address })),
     ...pJoins.map((e) => act(e, { kind: "join", text: `Member joined group #${e.args.groupId}`, who: e.args.member as Address })),
     ...receipts.map((e) =>
       act(e, { kind: "receipt", text: `Receipt co-signed in group #${e.args.groupId}`, amount: { value: big(e.args.amount), unit: "ngn" }, who: e.args.member as Address }),

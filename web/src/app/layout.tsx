@@ -9,8 +9,8 @@ const geistSans = localFont({ src: "./fonts/GeistVF.woff", variable: "--font-gei
 const geistMono = localFont({ src: "./fonts/GeistMonoVF.woff", variable: "--font-geist-mono", weight: "100 900" });
 
 export const metadata: Metadata = {
-  title: "AjoProof · Your ajo, verifiable",
-  description: "Co-signed thrift receipts nobody can change or deny, and savings circles enforced by code. Built on QIE.",
+  title: "CircleSeal · Your savings circle, sealed on-chain",
+  description: "Co-signed receipts for the savings groups people already run (ajo, susu, tontine, chama, tanda), and savings circles enforced by code. Built on QIE.",
 };
 
 export const viewport: Viewport = {

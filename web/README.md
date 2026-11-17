@@ -1,6 +1,6 @@
-# AjoProof web app
+# CircleSeal web app
 
-The Next.js front end and relayer API for AjoProof. See the [main README](../README.md) for what it does, how it works and how to run it.
+The Next.js front end and relayer API for CircleSeal. See the [main README](../README.md) for what it does, how it works and how to run it.
 
 ```bash
 npm install
