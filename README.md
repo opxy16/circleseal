@@ -1,6 +1,6 @@
 # CircleSeal
 
-**Your savings circle, sealed on-chain.** Co-signed savings receipts nobody can change or deny, and savings circles enforced by code, on the QIE blockchain.
+**Your savings circle, sealed on-chain.** Live at **https://circleseal.vercel.app**. Co-signed savings receipts nobody can change or deny, and savings circles enforced by code, on the QIE blockchain.
 
 People all over the world save together in rotating savings groups: ajo in Nigeria, susu in Ghana, tontines in Cameroon, chamas in Kenya, tandas in Mexico, stokvels in South Africa, chit funds in India. They run on trust, and that trust breaks in familiar ways. A collector disappears with the money. A member insists "I paid" and the collector says "you didn't". Years of disciplined saving leave no record a lender will accept.
 

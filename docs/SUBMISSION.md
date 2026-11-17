@@ -15,7 +15,7 @@ Co-signed receipts and code-enforced savings circles on QIE: proof for the savin
 
 **GitHub:** https://github.com/opxy16/circleseal
 
-**Live demo:** [https://…vercel.app]
+**Live demo:** https://circleseal.vercel.app
 
 **Contracts (QIE mainnet, chain 1990):**
 - AjoPassbook: [0x…]
