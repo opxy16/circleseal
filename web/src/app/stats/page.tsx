@@ -58,7 +58,7 @@ export default function StatsPage() {
         }
       />
 
-      {!isDeployed && <Notice tone="stamp">AjoProofContracts aren&apos;t deployed on this network yet.</Notice>apos;s contracts are being deployed to QIE right now. Check back shortly.</Notice>}
+      {!isDeployed && <Notice tone="stamp">AjoProof&apos;s contracts are being deployed to QIE right now. Check back shortly.</Notice>}
       {error && <Notice tone="bad">{error}</Notice>}
       {!stats && !error && <LoadingCard label="Reading every AjoProof event from the chain…" />}
 
