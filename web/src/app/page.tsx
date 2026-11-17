@@ -74,7 +74,7 @@ function Hero() {
           </Reveal>
           {!isDeployed && (
             <p className="rounded-lg border border-stamp-soft bg-stamp-soft px-3 py-2 text-sm">
-              Contracts aren&apos;t deployed on this network yet. Run the deploy script, then reload.
+              AjoProofContracts aren&apos;t deployed on this network yet. Run the deploy script, then reload.apos;s contracts are being deployed to QIE right now. Check back shortly to try it live.
             </p>
           )}
           <Reveal delay={240} className="w-full sm:w-auto">
