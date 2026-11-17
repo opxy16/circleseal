@@ -1,0 +1,8 @@
+{
+  "network": "qieTestnet",
+  "chainId": 1983,
+  "deployBlock": 0,
+  "AjoForwarder": "",
+  "AjoPassbook": "",
+  "AjoCircle": ""
+}

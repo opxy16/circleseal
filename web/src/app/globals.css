@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * AjoProof design tokens (shadcn/ui-style: semantic CSS variables, light + dark).
+ * Brand: deep emerald (trust, money). Accent: receipt-stamp amber.
+ */
+:root {
+  --bg: #f6f7f6;
+  --surface: #ffffff;
+  --surface-2: #f1f3f2;
+  --ink: #0f1713;
+  --muted: #5b6760;
+  --line: #e3e7e4;
+  --brand: #0b7a55;
+  --brand-strong: #075e41;
+  --brand-ink: #ffffff;
+  --brand-soft: #e6f4ee;
+  --stamp: #b86e0a;
+  --stamp-soft: #fdf3e2;
+  --ok: #15803d;
+  --bad: #c0362c;
+  --bad-soft: #fdecea;
+  --shadow: 0 1px 2px rgb(16 24 20 / 0.05), 0 1px 3px rgb(16 24 20 / 0.06);
+  --shadow-lg: 0 10px 30px -10px rgb(16 24 20 / 0.18), 0 2px 6px rgb(16 24 20 / 0.06);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0a0f0d;
+    --surface: #111814;
+    --surface-2: #17201b;
+    --ink: #e8efeb;
+    --muted: #93a39a;
+    --line: #233029;
+    --brand: #34c38f;
+    --brand-strong: #5fd6a8;
+    --brand-ink: #04120c;
+    --brand-soft: #12301f;
+    --stamp: #f2b552;
+    --stamp-soft: #33260f;
+    --ok: #4ade80;
+    --bad: #ff8a80;
+    --bad-soft: #3a1714;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 12px 32px -12px rgb(0 0 0 / 0.7);
+    color-scheme: dark;
+  }
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Soft brand glow behind hero sections. */
+.hero-glow {
+  background:
+    radial-gradient(60% 60% at 15% 0%, color-mix(in srgb, var(--brand) 16%, transparent) 0%, transparent 70%),
+    radial-gradient(50% 50% at 95% 10%, color-mix(in srgb, var(--stamp) 12%, transparent) 0%, transparent 70%);
+}
+
+/* Faint grid texture for hero backgrounds. */
+.grid-texture {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse at top, black 30%, transparent 75%);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

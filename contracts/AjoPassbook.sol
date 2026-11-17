@@ -74,6 +74,14 @@ contract AjoPassbook is EIP712, ERC2771Context {
         uint64 paidAt;
     }
 
+    /// A shareable invite link signed by the collector. Whoever redeems it first joins with `memberCode`.
+    struct Invite {
+        uint256 groupId;
+        bytes32 memberCode;
+        uint64 expiresAt;
+    }
+
+    bytes32 public constant INVITE_TYPEHASH = keccak256("Invite(uint256 groupId,bytes32 memberCode,uint64 expiresAt)");
     bytes32 public constant CONTRIBUTION_TYPEHASH = keccak256(
         "Contribution(uint256 groupId,address member,uint128 amount,uint32 period,bytes32 ref,uint64 paidAt)"
     );
@@ -98,6 +106,8 @@ contract AjoPassbook is EIP712, ERC2771Context {
     mapping(bytes32 digest => bool) public isRecorded;
     /// (group, ref) pairs already used, so the same payment can't be re-signed under new terms.
     mapping(uint256 groupId => mapping(bytes32 ref => bool)) public refUsed;
+    /// Invite links already redeemed (each link works once).
+    mapping(uint256 groupId => mapping(bytes32 memberCode => bool)) public inviteUsed;
 
     // ---------------------------------------------------------------------
     // Events
@@ -114,6 +124,7 @@ contract AjoPassbook is EIP712, ERC2771Context {
     event GroupClosed(uint256 indexed groupId);
     event MemberInvited(uint256 indexed groupId, address indexed member, bytes32 memberCode);
     event MemberJoined(uint256 indexed groupId, address indexed member);
+    event InviteRedeemed(uint256 indexed groupId, address indexed member, bytes32 memberCode);
     event MemberLeft(uint256 indexed groupId, address indexed member, bool removedByCollector);
     event ContributionRecorded(
         uint256 indexed groupId,
@@ -153,6 +164,9 @@ contract AjoPassbook is EIP712, ERC2771Context {
     error AlreadyRecorded(bytes32 digest);
     error RefAlreadyUsed(uint256 groupId, bytes32 ref);
     error ReceiptInFuture(uint64 paidAt);
+    error InviteExpired(uint64 expiresAt);
+    error InviteAlreadyUsed(uint256 groupId, bytes32 memberCode);
+    error BadInviteSignature();
 
     // ---------------------------------------------------------------------
     // Construction
@@ -215,6 +229,37 @@ contract AjoPassbook is EIP712, ERC2771Context {
         _touch(member);
 
         emit MemberJoined(groupId, member);
+    }
+
+    /// Join with a collector-signed invite link (no address needed in advance).
+    /// Each invite (group + memberCode) can be redeemed once, before it expires.
+    function joinWithInvite(Invite calldata inv, bytes calldata collectorSig) external {
+        Group storage g = _existingGroup(inv.groupId);
+        if (g.closed) revert GroupIsClosed(inv.groupId);
+        if (inv.expiresAt < block.timestamp) revert InviteExpired(inv.expiresAt);
+        if (inviteUsed[inv.groupId][inv.memberCode]) revert InviteAlreadyUsed(inv.groupId, inv.memberCode);
+        if (!SignatureChecker.isValidSignatureNow(g.collector, inviteDigest(inv), collectorSig)) {
+            revert BadInviteSignature();
+        }
+
+        address member = _msgSender();
+        if (member == g.collector) revert CollectorCannotBeMember();
+        Member storage m = _members[inv.groupId][member];
+        if (m.status == MemberStatus.Active || m.status == MemberStatus.Invited) {
+            revert AlreadyMember(inv.groupId, member);
+        }
+
+        inviteUsed[inv.groupId][inv.memberCode] = true;
+        m.status = MemberStatus.Active;
+        m.memberCode = inv.memberCode;
+        activeMemberCount[inv.groupId] += 1;
+
+        ThriftRecord storage r = _records[member];
+        r.groupsJoined += 1;
+        _touch(member);
+
+        emit InviteRedeemed(inv.groupId, member, inv.memberCode);
+        emit MemberJoined(inv.groupId, member);
     }
 
     function leaveGroup(uint256 groupId) external {
@@ -300,6 +345,10 @@ contract AjoPassbook is EIP712, ERC2771Context {
     // ---------------------------------------------------------------------
     // Views
     // ---------------------------------------------------------------------
+
+    function inviteDigest(Invite calldata inv) public view returns (bytes32) {
+        return _hashTypedDataV4(keccak256(abi.encode(INVITE_TYPEHASH, inv.groupId, inv.memberCode, inv.expiresAt)));
+    }
 
     function contributionDigest(Contribution calldata c) public view returns (bytes32) {
         return _hashTypedDataV4(

@@ -298,6 +298,83 @@ describe("AjoPassbook", () => {
     });
   });
 
+  describe("signed invite links", () => {
+    const inviteTypes = {
+      Invite: [
+        { name: "groupId", type: "uint256" },
+        { name: "memberCode", type: "bytes32" },
+        { name: "expiresAt", type: "uint64" },
+      ],
+    };
+
+    it("anyone with a valid link joins directly; the link then can't be reused", async () => {
+      const { passbook, collector, ada, bayo, domain } = await loadFixture(deployFixture);
+      await passbook.connect(collector).createGroup(ethers.ZeroHash, NGN, AMOUNT, DAILY);
+      const inv = { groupId: 1n, memberCode: ethers.id("LINK-1"), expiresAt: BigInt(await time.latest()) + 86_400n };
+      const sig = await collector.signTypedData(domain, inviteTypes, inv);
+
+      await expect(passbook.connect(ada).joinWithInvite(inv, sig))
+        .to.emit(passbook, "InviteRedeemed")
+        .withArgs(1n, ada.address, inv.memberCode)
+        .and.to.emit(passbook, "MemberJoined")
+        .withArgs(1n, ada.address);
+      const m = await passbook.getMember(1n, ada.address);
+      expect(m.status).to.equal(2n);
+      expect(m.memberCode).to.equal(inv.memberCode);
+      expect(await passbook.activeMemberCount(1n)).to.equal(1n);
+
+      await expect(passbook.connect(bayo).joinWithInvite(inv, sig)).to.be.revertedWithCustomError(passbook, "InviteAlreadyUsed");
+    });
+
+    it("rejects expired, fake, and collector-redeemed invites", async () => {
+      const { passbook, collector, ada, stranger, domain } = await loadFixture(deployFixture);
+      await passbook.connect(collector).createGroup(ethers.ZeroHash, NGN, AMOUNT, DAILY);
+      const now = BigInt(await time.latest());
+
+      const expired = { groupId: 1n, memberCode: ethers.id("OLD"), expiresAt: now - 1n };
+      await expect(
+        passbook.connect(ada).joinWithInvite(expired, await collector.signTypedData(domain, inviteTypes, expired)),
+      ).to.be.revertedWithCustomError(passbook, "InviteExpired");
+
+      const forged = { groupId: 1n, memberCode: ethers.id("FORGED"), expiresAt: now + 3_600n };
+      await expect(
+        passbook.connect(ada).joinWithInvite(forged, await stranger.signTypedData(domain, inviteTypes, forged)),
+      ).to.be.revertedWithCustomError(passbook, "BadInviteSignature");
+
+      const own = { groupId: 1n, memberCode: ethers.id("SELF"), expiresAt: now + 3_600n };
+      await expect(
+        passbook.connect(collector).joinWithInvite(own, await collector.signTypedData(domain, inviteTypes, own)),
+      ).to.be.revertedWithCustomError(passbook, "CollectorCannotBeMember");
+    });
+
+    it("a new member joins through an invite link with zero gas via the forwarder", async () => {
+      const { passbook, forwarder, relayer, collector, domain, chainId } = await loadFixture(deployFixture);
+      await passbook.connect(collector).createGroup(ethers.ZeroHash, NGN, AMOUNT, DAILY);
+      const inv = { groupId: 1n, memberCode: ethers.id("LINK-2"), expiresAt: BigInt(await time.latest()) + 86_400n };
+      const inviteSig = await collector.signTypedData(domain, inviteTypes, inv);
+
+      const member = ethers.Wallet.createRandom().connect(ethers.provider);
+      const request = {
+        from: member.address,
+        to: await passbook.getAddress(),
+        value: 0n,
+        gas: 300_000n,
+        nonce: await forwarder.nonces(member.address),
+        deadline: (await time.latest()) + 3_600,
+        data: passbook.interface.encodeFunctionData("joinWithInvite", [inv, inviteSig]),
+      };
+      const signature = await member.signTypedData(
+        { name: "AjoForwarder", version: "1", chainId, verifyingContract: await forwarder.getAddress() },
+        forwardRequestTypes,
+        request,
+      );
+      await expect(forwarder.connect(relayer).execute({ ...request, signature }))
+        .to.emit(passbook, "MemberJoined")
+        .withArgs(1n, member.address);
+      expect(await ethers.provider.getBalance(member.address)).to.equal(0n);
+    });
+  });
+
   describe("gasless actions through the forwarder", () => {
     it("a member accepts an invite without holding any gas; the relayer pays", async () => {
       const { passbook, forwarder, relayer, collector, stranger, chainId } = await loadFixture(deployFixture);

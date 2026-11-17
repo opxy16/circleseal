@@ -1,10 +1,16 @@
 {
   "name": "ajoproof",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Verifiable ajo / esusu thrift groups on QIE",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "hardhat compile && node scripts/export-abi.cjs",
+    "test": "hardhat test",
+    "demo": "hardhat run scripts/demo.ts",
+    "node": "hardhat node",
+    "deploy:local": "hardhat run scripts/deploy.ts --network localhost",
+    "deploy:testnet": "hardhat run scripts/deploy.ts --network qieTestnet",
+    "deploy:mainnet": "hardhat run scripts/deploy.ts --network qieMainnet",
+    "wallets:testnet": "node scripts/new-wallets.cjs qieTestnet"
   },
   "keywords": [],
   "author": "",
