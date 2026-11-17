@@ -11,19 +11,32 @@ import { addresses, chain, explorerAddress } from "@/lib/config";
 import { appUrl } from "@/lib/links";
 import { groupName, naira, periodLabel, shortAddr } from "@/lib/local";
 import { loadProof, savingFor, type Proof } from "@/lib/proof";
+import { isQieName, resolveQieName, useQieNames } from "@/lib/qieid";
 
 const date = (unix: number) => (unix ? new Date(unix * 1000).toLocaleDateString("en-NG", { dateStyle: "medium" }) : "–");
 
 export default function ProofPage() {
   const params = useParams<{ address: string }>();
-  const raw = params.address ?? "";
-  if (!isAddress(raw)) {
-    return (
-      <div className="mx-auto max-w-2xl">
-        <Notice tone="bad">This savings proof link isn&apos;t valid. Ask the member to share it again.</Notice>
-      </div>
-    );
+  const raw = decodeURIComponent(params.address ?? "");
+  const byName = isQieName(raw);
+  // Links can use a QIE ID (e.g. /proof/tolu.qie) as well as a wallet address.
+  const [resolved, setResolved] = useState<Address | null | undefined>(byName ? undefined : null);
+
+  useEffect(() => {
+    if (byName) resolveQieName(raw).then(setResolved);
+  }, [byName, raw]);
+
+  const invalid = (
+    <div className="mx-auto max-w-2xl">
+      <Notice tone="bad">This savings proof link isn&apos;t valid. Ask the member to share it again.</Notice>
+    </div>
+  );
+  if (byName) {
+    if (resolved === undefined) return <div className="mx-auto max-w-2xl"><LoadingCard label={`Looking up ${raw}…`} /></div>;
+    if (resolved === null) return <div className="mx-auto max-w-2xl"><Notice tone="bad">No wallet is linked to the QIE ID {raw}.</Notice></div>;
+    return <ProofView address={resolved} />;
   }
+  if (!isAddress(raw)) return invalid;
   return <ProofView address={getAddress(raw)} />;
 }
 
@@ -33,7 +46,8 @@ function ProofView({ address }: { address: Address }) {
   const [error, setError] = useState<string | null>(null);
   const [checkedAt, setCheckedAt] = useState<Date | null>(null);
   const [qr, setQr] = useState<string | null>(null);
-  const url = appUrl(`/proof/${address}`);
+  const qieName = useQieNames([address])[address.toLowerCase()];
+  const url = appUrl(`/proof/${qieName ?? address}`);
 
   useEffect(() => {
     (async () => {
@@ -77,7 +91,15 @@ function ProofView({ address }: { address: Address }) {
               {empty || !duration ? "No savings recorded yet" : `Saving for ${duration}`}
             </h1>
             <p className="mt-2 text-sm text-muted">
-              Wallet <span className="font-mono">{shortAddr(address)}</span>
+              {qieName ? (
+                <>
+                  <span className="font-medium text-ink">{qieName}</span> · <span className="font-mono">{shortAddr(address)}</span>
+                </>
+              ) : (
+                <>
+                  Wallet <span className="font-mono">{shortAddr(address)}</span>
+                </>
+              )}
               {first > 0 && ` · since ${date(first)}`}
             </p>
             <div className="mt-4 flex flex-wrap gap-2">

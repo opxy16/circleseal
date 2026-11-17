@@ -100,7 +100,22 @@ async function send(simulate: () => Promise<{ request: unknown }>): Promise<Hex>
     } catch (e) {
       throw new RelayError(explain(e), 422);
     }
-    const hash = await wallet.writeContract(useLegacyTx ? ({ ...request, type: "legacy" } as typeof request) : request);
+    const tx = useLegacyTx ? ({ ...request, type: "legacy" } as typeof request) : request;
+    // When hosted serverlessly, two app instances can pick the same nonce at the same moment.
+    // The in-memory queue can't see the other instance, so retry a couple of times on a nonce clash.
+    let hash: Hex | undefined;
+    for (let attempt = 0; !hash; attempt++) {
+      try {
+        hash = await wallet.writeContract(tx);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "";
+        if (attempt < 2 && /nonce|already known|replacement transaction/i.test(msg)) {
+          await new Promise((r) => setTimeout(r, 1_500 * (attempt + 1)));
+          continue;
+        }
+        throw e;
+      }
+    }
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     if (receipt.status !== "success") throw new RelayError("The transaction failed on-chain.", 500);
     return hash;
@@ -210,5 +225,34 @@ export async function relayFaucet(to: Address): Promise<{ gas: Hex | null; stabl
       await publicClient.waitForTransactionReceipt({ hash: stable });
     }
     return { gas, stable };
+  });
+}
+
+/**
+ * MAINNET ONLY: a one-off sliver of QIE (about $0.0015) so a circle wallet that already holds
+ * QUSDC can pay for its first QIEDEX swap (QUSDC -> QIE) and from then on pay its own fees.
+ * Only wallets holding at least 1 QUSDC and almost no QIE qualify, so draining it isn't worth it.
+ */
+const STARTER_GAS = parseEther("0.01");
+const STARTER_MIN_QUSDC = parseUnits("1", 6);
+const starterGiven = new Set<string>();
+
+export async function relayStarterGas(to: Address): Promise<{ gas: Hex }> {
+  if (chain.id !== 1990) throw new RelayError("Starter fees are only for mainnet.", 400);
+  if (!addresses.stablecoin) throw new RelayError("Circle mode isn't set up on this network.", 503);
+  if (starterGiven.has(to.toLowerCase())) throw new RelayError("This wallet already got its starter fee money.", 429);
+  const account = relayerAccount();
+  const wallet = createWalletClient({ account, chain, transport: http() });
+  return enqueue(async () => {
+    const [gasBal, qusdc] = await Promise.all([
+      publicClient.getBalance({ address: to }),
+      publicClient.readContract({ address: addresses.stablecoin, abi: MockStableAbi, functionName: "balanceOf", args: [to] }),
+    ]);
+    if (gasBal >= STARTER_GAS / 5n) throw new RelayError("This wallet already has QIE for fees.", 429);
+    if (qusdc < STARTER_MIN_QUSDC) throw new RelayError("Add at least 1 QUSDC to this wallet first.", 400);
+    starterGiven.add(to.toLowerCase());
+    const gas = await wallet.sendTransaction({ to, value: STARTER_GAS, ...(useLegacyTx ? { type: "legacy" } : {}) } as never);
+    await publicClient.waitForTransactionReceipt({ hash: gas });
+    return { gas };
   });
 }

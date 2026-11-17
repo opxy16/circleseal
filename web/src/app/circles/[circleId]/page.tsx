@@ -33,6 +33,7 @@ import {
 import { explorerTx } from "@/lib/config";
 import { appUrl, whatsappShare } from "@/lib/links";
 import { circleName, saveCircleName, shortAddr } from "@/lib/local";
+import { useQieNames } from "@/lib/qieid";
 
 export default function CirclePage() {
   const { circleId } = useParams<{ circleId: string }>();
@@ -68,6 +69,15 @@ function Circle({ id, account }: { id: bigint; account: PrivateKeyAccount }) {
   const [last, setLast] = useState<{ label: string; tx: TxResult } | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [clock, setClock] = useState(() => Math.floor(Date.now() / 1000));
+  const names = useQieNames(
+    data
+      ? [
+          data.circle.organizer,
+          ...data.rotation.map((m) => m.address),
+          ...data.history.map((h) => ("member" in h ? h.member : h.recipient)),
+        ]
+      : [],
+  );
 
   const load = useCallback(async () => {
     try {
@@ -130,7 +140,8 @@ function Circle({ id, account }: { id: bigint; account: PrivateKeyAccount }) {
   const paidCount = Object.values(paid).filter(Boolean).length;
   const progress = circle.status === "Open" ? 0 : Math.round((circle.settledRounds / Math.max(circle.memberCount, 1)) * 100);
 
-  const who = (a: Address) => (a.toLowerCase() === account.address.toLowerCase() ? "You" : shortAddr(a));
+  const who = (a: Address) =>
+    a.toLowerCase() === account.address.toLowerCase() ? "You" : (names[a.toLowerCase()] ?? shortAddr(a));
 
   const act = async (labelText: string, fn: () => Promise<TxResult>) => {
     setBusy(labelText);
@@ -191,7 +202,7 @@ function Circle({ id, account }: { id: bigint; account: PrivateKeyAccount }) {
       </Card>
 
       {/* Someone new needs funds before they can join, so show the wallet first. */}
-      {!me && circle.status === "Open" && <Funds address={account.address} refreshKey={refreshKey} />}
+      {!me && circle.status === "Open" && <Funds address={account.address} account={account} refreshKey={refreshKey} />}
 
       {/* Open: join / share / start */}
       {circle.status === "Open" && (
@@ -414,7 +425,7 @@ function Circle({ id, account }: { id: bigint; account: PrivateKeyAccount }) {
         </Card>
       )}
 
-      {(me || circle.status !== "Open") && <Funds address={account.address} refreshKey={refreshKey} />}
+      {(me || circle.status !== "Open") && <Funds address={account.address} account={account} refreshKey={refreshKey} />}
     </>
   );
 }

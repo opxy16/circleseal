@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAddress } from "viem";
-import { RelayError, relayFaucet } from "@/lib/relayer";
+import { chain } from "@/lib/config";
+import { RelayError, relayFaucet, relayStarterGas } from "@/lib/relayer";
 
 export const runtime = "nodejs";
 
-// Test networks only. 5 requests per hour per IP.
+// Test networks: free test funds. Mainnet: one-off starter fee money (see relayStarterGas). 5 requests per hour per IP.
 const WINDOW_MS = 60 * 60 * 1000;
 const LIMIT = 5;
 const hits = new Map<string, number[]>();
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
   try {
     const { address } = await req.json();
     if (typeof address !== "string" || !isAddress(address)) throw new RelayError("Malformed address.");
-    return NextResponse.json(await relayFaucet(address));
+    return NextResponse.json(chain.id === 1990 ? await relayStarterGas(address) : await relayFaucet(address));
   } catch (e) {
     const status = e instanceof RelayError ? e.status : 500;
     if (status >= 500) console.error("[faucet]", e);

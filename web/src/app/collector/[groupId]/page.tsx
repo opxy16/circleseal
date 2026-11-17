@@ -13,6 +13,7 @@ import { contributionTypes, inviteTypes, passbookDomain, payoutTypes, type Contr
 import { appUrl, encodePayload, whatsappShare } from "@/lib/links";
 import { groupName, memberLabel, naira, periodLabel, saveMemberLabel, shortAddr, toKobo } from "@/lib/local";
 import { membersOf, readGroup, readMember, type GroupView, type MemberView } from "@/lib/reads";
+import { useQieNames } from "@/lib/qieid";
 
 export default function GroupPage() {
   const params = useParams<{ groupId: string }>();
@@ -122,6 +123,7 @@ function Group({ account, groupId }: { account: PrivateKeyAccount; groupId: bigi
 }
 
 function Members({ members, label, group }: { members: MemberView[]; label: (m: MemberView) => string; group: GroupView }) {
+  const names = useQieNames(members.map((m) => m.address));
   return (
     <Card>
       <CardHeader title="Members" description={members.length ? `${members.length} active` : undefined} />
@@ -137,7 +139,13 @@ function Members({ members, label, group }: { members: MemberView[]; label: (m: 
                 <Avatar seed={m.address} name={label(m)} />
                 <div className="min-w-0">
                   <p className="truncate font-medium">{label(m)}</p>
-                  <p className="font-mono text-xs text-muted">{shortAddr(m.address)}</p>
+                  <p className="text-xs text-muted">
+                    {names[m.address.toLowerCase()] ? (
+                      <span className="font-medium text-brand">{names[m.address.toLowerCase()]}</span>
+                    ) : (
+                      <span className="font-mono">{shortAddr(m.address)}</span>
+                    )}
+                  </p>
                 </div>
               </div>
               <div className="shrink-0 text-right">

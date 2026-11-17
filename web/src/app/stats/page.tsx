@@ -7,6 +7,10 @@ import { fmt, tokenInfo, type TokenInfo } from "@/lib/circle";
 import { addresses, chain, explorerAddress, explorerTx, isDeployed } from "@/lib/config";
 import { naira, shortAddr } from "@/lib/local";
 import { loadStats, type Activity, type Stats } from "@/lib/stats";
+import { useQieNames } from "@/lib/qieid";
+import { nativeHasPrice, usd, useQiePrice } from "@/lib/price";
+import { formatEther } from "viem";
+import { Fuel, LineChart } from "lucide-react";
 
 export default function StatsPage() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -14,6 +18,8 @@ export default function StatsPage() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [updated, setUpdated] = useState<Date | null>(null);
+  const names = useQieNames(stats?.recent.map((a) => a.who) ?? []);
+  const price = useQiePrice();
 
   const load = useCallback(async () => {
     setBusy(true);
@@ -99,6 +105,48 @@ export default function StatsPage() {
             </Card>
           </div>
 
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader
+                eyebrow="Gas-free for members"
+                title={<span className="flex items-center gap-2"><Fuel className="h-4 w-4 text-brand" aria-hidden /> Network fees AjoProof paid</span>}
+                description="Members never buy crypto: the relayer pays every passbook transaction's fee."
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <Stat
+                  label="Fees paid"
+                  value={`${Number(formatEther(stats.sponsored.fees)).toLocaleString("en-US", { maximumFractionDigits: 6 })} ${chain.nativeCurrency.symbol}`}
+                  sub={usd(stats.sponsored.fees, price) ?? undefined}
+                />
+                <Stat
+                  label="Transactions sponsored"
+                  value={stats.sponsored.transactions}
+                  sub={stats.sponsored.complete ? undefined : "fees counted for the latest 300"}
+                />
+              </div>
+            </Card>
+            <Card>
+              <CardHeader
+                eyebrow="QIE oracle"
+                title={<span className="flex items-center gap-2"><LineChart className="h-4 w-4 text-brand" aria-hidden /> QIE price</span>}
+                description="Read from QIE's on-chain QIE/USDT price feed on mainnet."
+              />
+              {price ? (
+                <div className="grid grid-cols-2 gap-4">
+                  <Stat label="QIE / USDT" value={`$${price.price.toLocaleString("en-US", { maximumFractionDigits: 4 })}`} sub={price.stale ? "feed hasn't updated recently" : undefined} />
+                  <Stat
+                    label="Last update"
+                    value={new Date(price.updatedAt * 1000).toLocaleTimeString("en-NG", { hour: "2-digit", minute: "2-digit" })}
+                    sub={new Date(price.updatedAt * 1000).toLocaleDateString("en-NG", { dateStyle: "medium" })}
+                  />
+                </div>
+              ) : (
+                <p className="text-sm text-muted">Price unavailable right now.</p>
+              )}
+              {!nativeHasPrice && <p className="mt-3 text-xs text-muted">This is a test network, so its coins have no dollar value; the price applies on mainnet.</p>}
+            </Card>
+          </div>
+
           <Card>
             <CardHeader
               title={<span className="flex items-center gap-2"><ActivityIcon className="h-4 w-4 text-brand" aria-hidden /> Recent activity</span>}
@@ -109,7 +157,7 @@ export default function StatsPage() {
             ) : (
               <ul className="-my-2 divide-y divide-line text-sm">
                 {stats.recent.map((a) => (
-                  <ActivityRow key={`${a.tx}-${a.index}`} a={a} tok={tok} />
+                  <ActivityRow key={`${a.tx}-${a.index}`} a={a} tok={tok} name={a.who ? names[a.who.toLowerCase()] : null} />
                 ))}
               </ul>
             )}
@@ -167,7 +215,7 @@ const DOT: Record<Activity["kind"], string> = {
   miss: "bg-bad",
 };
 
-function ActivityRow({ a, tok }: { a: Activity; tok: (v: bigint) => string }) {
+function ActivityRow({ a, tok, name }: { a: Activity; tok: (v: bigint) => string; name?: string | null }) {
   return (
     <li className="flex items-start justify-between gap-3 py-3">
       <span className="flex min-w-0 gap-3">
@@ -178,7 +226,7 @@ function ActivityRow({ a, tok }: { a: Activity; tok: (v: bigint) => string }) {
             {a.amount && <span className="font-medium tabular-nums"> · {a.amount.unit === "ngn" ? naira(a.amount.value) : tok(a.amount.value)}</span>}
           </span>
           <span className="block text-xs text-muted">
-            {a.who && <span className="font-mono">{shortAddr(a.who)}</span>}
+            {a.who && (name ? <span className="font-medium text-brand">{name}</span> : <span className="font-mono">{shortAddr(a.who)}</span>)}
             {a.time && ` · ${new Date(a.time * 1000).toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short" })}`}
           </span>
         </span>

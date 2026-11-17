@@ -104,7 +104,7 @@ function Circles({ account }: { account: PrivateKeyAccount }) {
 
   return (
     <>
-      <Funds address={account.address} />
+      <Funds address={account.address} account={account} />
 
       <section className="flex flex-col gap-2">
         <h2 className="text-sm font-semibold text-muted">Your circles</h2>

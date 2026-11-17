@@ -27,6 +27,8 @@ export type Stats = {
   circle: { circles: number; members: number; contributions: number; contributed: bigint; paidOut: bigint; covered: number };
   wallets: number;
   transactions: number;
+  /** Network fees AjoProof's relayer paid so passbook members never needed crypto. */
+  sponsored: { transactions: number; fees: bigint; complete: boolean };
   recent: Activity[];
 };
 
@@ -144,6 +146,22 @@ export async function loadStats(): Promise<Stats> {
     },
     wallets: allWallets.size,
     transactions: txs.size,
+    sponsored: await sponsoredFees([groups, pJoins, receipts, payouts].flat().map((e) => e.log.transactionHash as Hex)),
     recent,
   };
+}
+
+/** Sum gas fees of the relayer-sent passbook transactions (capped so the page stays fast). */
+const MAX_FEE_RECEIPTS = 300;
+async function sponsoredFees(hashes: Hex[]): Promise<Stats["sponsored"]> {
+  const unique = [...new Set(hashes)];
+  const sample = unique.slice(-MAX_FEE_RECEIPTS);
+  let fees = 0n;
+  for (let i = 0; i < sample.length; i += 20) {
+    const receipts = await Promise.all(
+      sample.slice(i, i + 20).map((hash) => publicClient.getTransactionReceipt({ hash }).catch(() => null)),
+    );
+    for (const r of receipts) if (r) fees += r.gasUsed * (r.effectiveGasPrice ?? 0n);
+  }
+  return { transactions: unique.length, fees, complete: sample.length === unique.length };
 }

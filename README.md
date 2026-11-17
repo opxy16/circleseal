@@ -92,6 +92,18 @@ flowchart TB
 
 ---
 
+## Built on the QIE ecosystem
+
+| QIE building block | How AjoProof uses it |
+|---|---|
+| **QIE blockchain** | All three contracts live on QIE. Gas is cheap enough that AjoProof can pay every member's fees. |
+| **QIE ID (.qie names)** | Members show as `tolu.qie` instead of `0x9BCE…`, in the circle rotation, collector member lists, the stats feed and the wallet badge. Savings proof links work by name: `/proof/tolu.qie`. Lookups go through QIE's official read-only MCP service ([`qieid-server.ts`](web/src/lib/qieid-server.ts)). |
+| **QIE Oracle** | The live QIE/USDT price feed (`0x3Bc6…7D17`, AggregatorV3) prices the network fees AjoProof pays for members, and circle wallets' fee balances, in dollars ([`/api/qie-price`](web/src/app/api/qie-price/route.ts)). |
+| **QIEDEX** | A circle wallet low on QIE can swap 1 QUSDC for QIE in-app. The quote comes from QIEDEX's API, but the app builds the `swapExactTokensForETH` call itself against the official router, so it never signs third-party calldata ([`qiedex.ts`](web/src/lib/qiedex.ts)). |
+| **QUSDC** | The currency of circle mode on mainnet (`0x3F43…5DA5`). |
+
+---
+
 ## Contracts
 
 | Contract | What it does |
@@ -183,6 +195,20 @@ Open two different origins, such as `http://127.0.0.1:3107` and `http://localhos
    - the relayer key for that network (`RELAYER_PRIVATE_KEY_QIETESTNET` / `_QIEMAINNET`) is already there from step 1
 
 Network details: mainnet chain 1990 (`https://rpc1mainnet.qie.digital`), testnet chain 1983 (`https://rpc1testnet.qie.digital`), explorers `mainnet.qie.digital` / `testnet.qie.digital`.
+
+## Host the app (Vercel)
+
+1. Import `opxy16/ajoproof` at https://vercel.com/new and set **Root Directory** to `web`. The framework is detected as Next.js.
+2. Add these environment variables:
+
+   | Variable | Value |
+   |---|---|
+   | `NEXT_PUBLIC_NETWORK` | `qieTestnet` or `qieMainnet` |
+   | `RELAYER_PRIVATE_KEY_QIETESTNET` or `RELAYER_PRIVATE_KEY_QIEMAINNET` | The relayer wallet's key, from `web/.env.local`. Mark it **Sensitive**. |
+
+3. Deploy. After each contract deployment, commit the updated `web/src/lib/deployments/<network>.json` so the site picks up the new addresses.
+
+The relayer sends transactions one at a time and retries if two app instances pick the same nonce at the same moment. Keep only a little QIE in the relayer wallet; it is only for fees.
 
 ## Project structure
 

@@ -1,18 +1,22 @@
 "use client";
 
-import { Fuel, Gift, Wallet } from "lucide-react";
+import { ArrowDownUp, Fuel, Gift, Wallet } from "lucide-react";
+import type { PrivateKeyAccount } from "viem/accounts";
+import { qiedexAvailable, quoteQusdcToQie, swapQusdcForQie, type DexQuote } from "@/lib/qiedex";
 import { useCallback, useEffect, useState } from "react";
-import { formatEther, type Address } from "viem";
+import { formatEther, parseEther, parseUnits, type Address } from "viem";
 import { Button, Card, CopyButton, Notice } from "./ui";
 import { balances, faucetAvailable, fmt, requestTestFunds, tokenInfo, type TokenInfo } from "@/lib/circle";
 import { addresses, chain } from "@/lib/config";
+import { usd, useQiePrice } from "@/lib/price";
 
 /** The wallet's stablecoin and fee balances, with a test-funds button on test networks. */
-export function Funds({ address, refreshKey = 0 }: { address: Address; refreshKey?: number }) {
+export function Funds({ address, account, refreshKey = 0 }: { address: Address; account?: PrivateKeyAccount; refreshKey?: number }) {
   const [token, setToken] = useState<TokenInfo | null>(null);
   const [bal, setBal] = useState<{ gas: bigint; stable: bigint } | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const price = useQiePrice();
 
   const load = useCallback(async () => {
     if (!addresses.stablecoin) return;
@@ -60,6 +64,7 @@ export function Funds({ address, refreshKey = 0 }: { address: Address; refreshKe
           <p className="mt-0.5 break-words text-base font-semibold tabular-nums sm:text-lg">
             {bal ? `${Number(formatEther(bal.gas)).toLocaleString("en-NG", { maximumFractionDigits: 4 })} ${chain.nativeCurrency.symbol}` : "…"}
           </p>
+          {bal && usd(bal.gas, price) && <p className="text-xs text-muted">{usd(bal.gas, price)} (QIE oracle)</p>}
         </div>
       </div>
       {low && faucetAvailable && (
@@ -88,12 +93,74 @@ export function Funds({ address, refreshKey = 0 }: { address: Address; refreshKe
           </Button>
         </div>
       )}
-      {low && !faucetAvailable && (
-        <Notice tone="stamp">
-          Send {token?.symbol ?? "QUSDC"} and a little {chain.nativeCurrency.symbol} (for network fees) to this wallet&apos;s address to take part.
-        </Notice>
+      {!faucetAvailable && bal && bal.stable === 0n && (
+        <Notice tone="stamp">Send {token?.symbol ?? "QUSDC"} to this wallet&apos;s address to take part. You can then swap a little of it for fee money here.</Notice>
+      )}
+      {qiedexAvailable && bal && account && bal.stable >= parseUnits("1", 6) && bal.gas < parseEther("0.05") && (
+        <FeeTopUp account={account} gas={bal.gas} onDone={load} />
       )}
       {error && <Notice tone="bad">{error}</Notice>}
     </Card>
+  );
+}
+
+/** Mainnet: get fee money by swapping 1 QUSDC for QIE on QIEDEX (with a one-off starter if the wallet has none). */
+function FeeTopUp({ account, gas, onDone }: { account: PrivateKeyAccount; gas: bigint; onDone: () => Promise<void> }) {
+  const [quote, setQuote] = useState<DexQuote | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [done, setDone] = useState<string | null>(null);
+  const needsStarter = gas < parseEther("0.002");
+
+  useEffect(() => {
+    quoteQusdcToQie(1).then(setQuote).catch((e) => setError(e instanceof Error ? e.message : "No quote."));
+  }, []);
+
+  const run = async (label: string, fn: () => Promise<unknown>) => {
+    setBusy(label);
+    setError(null);
+    try {
+      await fn();
+      await onDone();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong.");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-3 rounded-lg border border-dashed border-stamp p-3">
+      <p className="flex items-center gap-2 text-sm font-medium">
+        <ArrowDownUp className="h-4 w-4 text-stamp" aria-hidden /> Fee money from QIEDEX
+      </p>
+      <p className="text-sm text-muted">
+        Swap 1 QUSDC for {quote ? `about ${Number(quote.amountOutDecimal).toLocaleString("en-US", { maximumFractionDigits: 2 })} QIE` : "QIE"} on
+        QIEDEX, QIE&apos;s own exchange. That covers thousands of circle payments.
+      </p>
+      {needsStarter ? (
+        <Button variant="outline" loading={busy === "starter"} onClick={() => run("starter", () => requestTestFunds(account.address))}>
+          {busy !== "starter" && <Gift className="h-4 w-4" aria-hidden />} Get starter fee money first
+        </Button>
+      ) : (
+        <Button
+          variant="outline"
+          loading={busy === "swap"}
+          disabled={!quote}
+          onClick={() =>
+            run("swap", async () => {
+              const fresh = await quoteQusdcToQie(1);
+              const r = await swapQusdcForQie(account, fresh);
+              setDone(r.hash);
+            })
+          }
+        >
+          {busy !== "swap" && <ArrowDownUp className="h-4 w-4" aria-hidden />} Swap 1 QUSDC for QIE
+        </Button>
+      )}
+      {quote && quote.priceImpactPct > 3 && <Notice tone="stamp">Price impact is {quote.priceImpactPct.toFixed(1)}% right now.</Notice>}
+      {done && <Notice tone="ok">Swapped on QIEDEX. Your fee balance is topped up.</Notice>}
+      {error && <Notice tone="bad">{error}</Notice>}
+    </div>
   );
 }
