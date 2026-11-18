@@ -6,7 +6,7 @@ import QRCode from "qrcode";
 import { useEffect, useState } from "react";
 import { getAddress, isAddress, type Address } from "viem";
 import { Badge, Button, Card, CardHeader, CopyButton, LoadingCard, Notice, Stat } from "@/components/ui";
-import { BorderBeam } from "@/components/fx";
+import { Guilloche, Seal } from "@/components/seal";
 import { fmt, tokenInfo, type TokenInfo } from "@/lib/circle";
 import { addresses, chain, explorerAddress } from "@/lib/config";
 import { appUrl } from "@/lib/links";
@@ -83,13 +83,16 @@ function ProofView({ address }: { address: Address }) {
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6 print:max-w-none print:gap-4">
       {/* Certificate header */}
-      <section className="relative overflow-hidden rounded-2xl border border-line bg-surface p-6 shadow-card sm:p-8 print:shadow-none">
-        <div className="hero-glow pointer-events-none absolute inset-0 print:hidden" aria-hidden />
-        <span className="print:hidden"><BorderBeam duration={9} /></span>
+      <section className="relative overflow-hidden rounded-2xl border border-ink/20 bg-surface p-2 shadow-lift print:shadow-none">
+        {/* Certificate frame: an outer rule, an inner double rule, and guilloché in the corners. */}
+        <div className="relative overflow-hidden rounded-xl border-[3px] border-double border-brand/50 p-6 sm:p-9">
+        <Guilloche size={300} rings={3} lines={9} k={12} className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 text-brand opacity-[0.18]" />
+        <Guilloche size={300} rings={3} lines={9} k={12} className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 text-brand opacity-[0.18]" />
+        {!empty && <Seal className="absolute bottom-4 right-4 hidden sm:block print:block" size={118} angle={-14} center="VERIFIED" text="SAVINGS RECORD · READ LIVE ON QIE · " play />}
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-wider text-brand">CircleSeal savings record</p>
-            <h1 className="mt-2 text-balance text-3xl font-semibold tracking-tight">
+            <p className="text-sm font-semibold text-brand">CircleSeal savings record</p>
+            <h1 className="font-display mt-2 text-balance text-4xl leading-[1.02] sm:text-5xl">
               {empty || !duration ? "No savings recorded yet" : `Saving for ${duration}`}
             </h1>
             <p className="mt-2 text-sm text-muted">
@@ -122,13 +125,14 @@ function ProofView({ address }: { address: Address }) {
         </div>
 
         {!empty && (
-          <div className="relative mt-6 grid grid-cols-2 gap-4 border-t border-line pt-6 sm:grid-cols-4">
+          <div className="relative mt-8 grid grid-cols-2 gap-5 border-t-[3px] border-double border-ink/20 pt-6 sm:grid-cols-4 sm:pr-28">
             <Stat label="Total saved" value={naira(totals.saved)} />
             <Stat label="Payments made" value={totals.payments} />
             <Stat label="Payouts received" value={naira(totals.received)} sub={`${record.payouts} payout${record.payouts === 1 ? "" : "s"}`} />
             <Stat label="Consistency" value={consistency === null ? "–" : `${consistency}%`} sub={totals.periodsSpanned ? `${totals.periodsPaid} of ${totals.periodsSpanned} periods paid` : undefined} />
           </div>
         )}
+        </div>
       </section>
 
       {empty && (

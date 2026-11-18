@@ -76,11 +76,11 @@ export function WalletGate({ children, purpose }: { children: (account: PrivateK
     return (
       <Card className="flex flex-col gap-5">
         <div className="flex items-start gap-4">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border-2 border-dashed border-brand/50 text-brand">
             <ShieldCheck className="h-5 w-5" aria-hidden />
           </span>
           <div>
-          <h2 className="text-lg font-semibold tracking-tight">Set up your CircleSeal wallet</h2>
+          <h2 className="font-wide text-lg font-bold tracking-tight">Set up your CircleSeal wallet</h2>
           <p className="mt-1 text-sm text-muted">
             {purpose ?? "It takes a few seconds."} It lives in this browser, so there&apos;s no app to install.
           </p>
@@ -113,11 +113,11 @@ export function WalletGate({ children, purpose }: { children: (account: PrivateK
   return (
     <Card className="mx-auto flex w-full max-w-md flex-col gap-5">
       <div className="flex items-start gap-4">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border-2 border-dashed border-brand/50 text-brand">
           <KeyRound className="h-5 w-5" aria-hidden />
         </span>
         <div>
-          <h2 className="text-lg font-semibold tracking-tight">Unlock your wallet</h2>
+          <h2 className="font-wide text-lg font-bold tracking-tight">Unlock your wallet</h2>
           <p className="mt-1 text-sm text-muted">{purpose ?? "Enter your 6-digit PIN to continue."}</p>
         </div>
       </div>

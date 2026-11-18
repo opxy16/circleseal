@@ -107,7 +107,7 @@ function Circles({ account }: { account: PrivateKeyAccount }) {
       <Funds address={account.address} account={account} />
 
       <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-semibold text-muted">Your circles</h2>
+        <h2 className="font-wide text-lg font-bold">Your circles</h2>
         {loadError && <Notice tone="bad">{loadError}</Notice>}
         {!circles && !loadError && <LoadingCard label="Reading your circles from QIE…" />}
         {circles?.length === 0 && (
@@ -120,7 +120,7 @@ function Circles({ account }: { account: PrivateKeyAccount }) {
             <li key={String(c.id)}>
               <Link href={`/circles/${c.id}`} className="group block">
                 <Card className="flex items-center gap-4 transition-colors group-hover:border-brand">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-stamp-soft text-stamp">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 border-dashed border-stamp/50 text-stamp">
                     <RefreshCcw className="h-5 w-5" aria-hidden />
                   </span>
                   <div className="min-w-0 flex-1">

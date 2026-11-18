@@ -6,7 +6,9 @@ import { Suspense, useEffect, useState } from "react";
 import { keccak256, toBytes, type Hex } from "viem";
 import type { PrivateKeyAccount } from "viem/accounts";
 import { BadgeCheck, Coins, HandCoins, ShieldCheck, Users } from "lucide-react";
+import { Seal } from "@/components/seal";
 import { Badge, Button, Card, LoadingCard, Notice, PageHeader, TxLink } from "@/components/ui";
+import { primaryLink } from "@/components/styles";
 import { WalletGate } from "@/components/wallet";
 import { AjoPassbookAbi } from "@/lib/abi/AjoPassbook";
 import { gasless, type RelayResult } from "@/lib/actions";
@@ -97,21 +99,22 @@ function JoinCard({ account, invite }: { account: PrivateKeyAccount; invite: Inv
   if (!group && !problem) return <LoadingCard label="Checking the invite…" />;
 
   return (
-    <Card className="flex flex-col gap-5">
+    <Card className="relative flex flex-col gap-5 overflow-hidden">
+      {done && <Seal className="absolute -right-4 -top-4" size={110} play center="JOINED" text="MEMBER · RECORDED ON QIE · " />}
       <div className="flex items-start gap-4">
-        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand">
+        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border-2 border-dashed border-brand/50 text-brand">
           <Users className="h-6 w-6" aria-hidden />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold uppercase tracking-wider text-stamp">Savings group</p>
-          <h2 className="truncate text-xl font-semibold tracking-tight">{invite.name}</h2>
+          <p className="text-xs font-semibold text-stamp">Savings group</p>
+          <h2 className="font-display truncate text-2xl">{invite.name}</h2>
           {group && (
             <p className="text-sm text-muted">
               {naira(group.contributionAmount)} {periodLabel(group.periodSeconds)}
             </p>
           )}
         </div>
-        {group && nameVerified && (
+        {group && nameVerified && !done && (
           <Badge tone="brand">
             <BadgeCheck className="h-3.5 w-3.5" aria-hidden /> Verified
           </Badge>
@@ -130,7 +133,7 @@ function JoinCard({ account, invite }: { account: PrivateKeyAccount; invite: Inv
             <br />
             Recorded on QIE: <TxLink hash={done.hash} explorer={done.explorer} />
           </Notice>
-          <Link href="/me" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-brand px-5 font-medium text-brand-ink shadow-card hover:bg-brand-strong">
+          <Link href="/me" className={primaryLink}>
             See my passbook
           </Link>
         </>

@@ -90,7 +90,7 @@ function Collector({ account }: { account: PrivateKeyAccount }) {
               <li key={String(g.id)}>
                 <Link href={`/collector/${g.id}`} className="group block">
                   <Card className="flex items-center gap-4 transition-colors group-hover:border-brand">
-                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-soft text-brand">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 border-dashed border-brand/50 text-brand">
                       <ClipboardList className="h-5 w-5" aria-hidden />
                     </span>
                     <div className="min-w-0 flex-1">

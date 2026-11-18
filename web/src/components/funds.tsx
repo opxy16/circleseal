@@ -40,11 +40,11 @@ export function Funds({ address, account, refreshKey = 0 }: { address: Address; 
     <Card className="flex flex-col gap-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-3">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-soft text-brand">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 border-dashed border-brand/50 text-brand">
             <Wallet className="h-5 w-5" aria-hidden />
           </span>
           <div className="min-w-0">
-            <p className="font-semibold tracking-tight">Circle wallet</p>
+            <p className="font-wide font-bold tracking-tight">Circle wallet</p>
             <p className="truncate font-mono text-xs text-muted" title={address}>
               {address.slice(0, 10)}…{address.slice(-8)}
             </p>

@@ -64,19 +64,19 @@ export default function StatsPage() {
 
       {stats && (
         <>
-          <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <section aria-label="Totals" className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-ink/15 bg-ink/10 shadow-card lg:grid-cols-4">
             {[
               { label: "Wallets", value: stats.wallets, money: false },
               { label: "Transactions", value: stats.transactions, money: false },
               { label: "Receipts co-signed", value: stats.passbook.receipts, money: false },
               { label: "Savings recorded", value: Number(stats.passbook.recorded) / 100, money: true },
             ].map((k) => (
-              <Card key={k.label}>
-                <Stat
-                  label={k.label}
-                  value={<NumberTicker value={k.value} format={(n) => (k.money ? naira(Math.round(n) * 100) : Math.round(n).toLocaleString("en-NG"))} />}
-                />
-              </Card>
+              <div key={k.label} className="flex flex-col gap-1 bg-surface px-5 py-5">
+                <span className="text-xs font-medium text-muted">{k.label}</span>
+                <span className="font-display truncate text-2xl tabular-nums sm:text-3xl">
+                  <NumberTicker value={k.value} format={(n) => (k.money ? naira(Math.round(n) * 100) : Math.round(n).toLocaleString("en-NG"))} />
+                </span>
+              </div>
             ))}
           </section>
 
@@ -87,12 +87,12 @@ export default function StatsPage() {
                 title={<span className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-brand" aria-hidden /> Co-signed receipts</span>}
                 description="Cash and transfer savings groups, recorded with both signatures."
               />
-              <dl className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <Stat label="Groups" value={stats.passbook.groups} />
                 <Stat label="Members" value={stats.passbook.members} />
                 <Stat label="Contributions" value={stats.passbook.receipts} sub={naira(stats.passbook.recorded)} />
                 <Stat label="Payouts" value={stats.passbook.payouts} sub={naira(stats.passbook.paidOut)} />
-              </dl>
+              </div>
             </Card>
             <Card>
               <CardHeader
@@ -100,12 +100,12 @@ export default function StatsPage() {
                 title={<span className="flex items-center gap-2"><RefreshCcw className="h-4 w-4 text-stamp" aria-hidden /> Code-enforced circles</span>}
                 description={`Rotating savings in ${token?.symbol ?? "a stablecoin"}, held by the contract.`}
               />
-              <dl className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <Stat label="Circles" value={stats.circle.circles} />
                 <Stat label="Members" value={stats.circle.members} />
                 <Stat label="Round payments" value={stats.circle.contributions} sub={tok(stats.circle.contributed)} />
                 <Stat label="Paid out" value={tok(stats.circle.paidOut)} sub={`${stats.circle.covered} missed payment${stats.circle.covered === 1 ? "" : "s"} covered`} />
-              </dl>
+              </div>
             </Card>
           </div>
 
@@ -223,7 +223,7 @@ function ActivityRow({ a, tok, name }: { a: Activity; tok: (v: bigint) => string
   return (
     <li className="flex items-start justify-between gap-3 py-3">
       <span className="flex min-w-0 gap-3">
-        <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${DOT[a.kind]}`} aria-hidden />
+        <span className={`mt-1.5 h-2 w-2 shrink-0 rotate-45 ${DOT[a.kind]}`} aria-hidden />
         <span className="min-w-0">
           <span className="block text-pretty">
             {a.text}

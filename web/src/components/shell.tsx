@@ -3,6 +3,7 @@
 import { BookOpen, ClipboardList, Home, RefreshCcw } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SealMark } from "./seal";
 import { WalletBadge } from "./wallet-badge";
 
 const NAV = [
@@ -16,14 +17,9 @@ const isActive = (path: string, href: string) => (href === "/" ? path === "/" : 
 
 export function Logo() {
   return (
-    <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight" aria-label="CircleSeal home">
-      <svg viewBox="0 0 32 32" className="h-8 w-8" aria-hidden>
-        <rect width="32" height="32" rx="9" className="fill-brand" />
-        <circle cx="13" cy="16" r="6.5" fill="none" stroke="currentColor" strokeWidth="2.2" className="text-brand-ink" opacity="0.55" />
-        <circle cx="19" cy="16" r="6.5" fill="none" stroke="currentColor" strokeWidth="2.2" className="text-brand-ink" />
-        <path d="m16.2 16.2 1.9 1.9 3.6-3.8" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-brand-ink" />
-      </svg>
-      <span className="text-[17px]">CircleSeal</span>
+    <Link href="/" className="group flex items-center gap-2.5" aria-label="CircleSeal home">
+      <SealMark className="h-9 w-9 transition-transform duration-500 group-hover:rotate-[24deg]" />
+      <span className="font-display text-[17px] tracking-tight">CircleSeal</span>
     </Link>
   );
 }
@@ -31,26 +27,31 @@ export function Logo() {
 export function Header({ network }: { network: string }) {
   const path = usePathname();
   return (
-    <header className="sticky top-0 z-20 border-b border-line bg-bg print:hidden">
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-4">
-        <div className="flex items-center gap-8">
+    <header className="sticky top-0 z-30 border-b border-ink/10 bg-bg/90 backdrop-blur-md print:hidden">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex items-center gap-10">
           <Logo />
-          <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
-            {[...NAV.slice(1), { href: "/stats", label: "Stats" }].map((n) => (
-              <Link
-                key={n.href}
-                href={n.href}
-                aria-current={isActive(path, n.href) ? "page" : undefined}
-                className={`rounded-md px-3 py-2 text-sm transition-colors ${isActive(path, n.href) ? "bg-surface-2 font-medium text-ink" : "text-muted hover:text-ink"}`}
-              >
-                {n.label}
-              </Link>
-            ))}
+          <nav className="hidden items-center gap-6 md:flex" aria-label="Main">
+            {[...NAV.slice(1), { href: "/stats", label: "Live stats" }].map((n) => {
+              const active = isActive(path, n.href);
+              return (
+                <Link
+                  key={n.href}
+                  href={n.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`relative py-2 text-sm font-semibold transition-colors after:absolute after:inset-x-0 after:-bottom-[13px] after:h-[3px] after:rounded-full after:transition-transform after:duration-300 ${
+                    active ? "text-ink after:scale-x-100 after:bg-stamp" : "text-muted after:scale-x-0 after:bg-ink/30 hover:text-ink hover:after:scale-x-100"
+                  }`}
+                >
+                  {n.label}
+                </Link>
+              );
+            })}
           </nav>
         </div>
         <div className="flex items-center gap-2">
-          <span className="hidden items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-xs text-muted sm:inline-flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden />
+          <span className="hidden items-center gap-2 rounded-md border border-ink/15 px-2.5 py-1 text-xs font-medium text-muted sm:inline-flex">
+            <span className="live-dot relative h-1.5 w-1.5 rounded-full bg-ok text-ok" aria-hidden />
             {network}
           </span>
           <WalletBadge />
@@ -66,7 +67,7 @@ export function TabBar() {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] md:hidden print:hidden"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-ink/10 bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden print:hidden"
     >
       <ul className="mx-auto grid max-w-md grid-cols-4">
         {NAV.map(({ href, label, icon: Icon }) => {
@@ -76,9 +77,13 @@ export function TabBar() {
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-h-14 flex-col items-center justify-center gap-0.5 text-[11px] ${active ? "font-medium text-brand" : "text-muted"}`}
+                className={`relative flex min-h-[60px] flex-col items-center justify-center gap-1 text-[11px] transition-colors ${active ? "font-bold text-ink" : "font-medium text-muted"}`}
               >
-                <Icon className="h-5 w-5" aria-hidden strokeWidth={active ? 2.4 : 2} />
+                <span
+                  className={`grid h-7 w-12 place-items-center rounded-full transition-colors duration-300 ${active ? "bg-brand-soft text-brand" : ""}`}
+                >
+                  <Icon className="h-5 w-5" aria-hidden strokeWidth={active ? 2.4 : 2} />
+                </span>
                 {label}
               </Link>
             </li>
@@ -91,20 +96,22 @@ export function TabBar() {
 
 export function Footer({ network }: { network: string }) {
   return (
-    <footer className="border-t border-line print:hidden">
-      <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-col gap-1">
+    <footer className="border-t-[3px] border-double border-ink/20 print:hidden">
+      <div className="mx-auto grid max-w-6xl gap-6 px-4 py-10 text-sm text-muted sm:grid-cols-[1fr_auto] sm:items-end sm:px-6">
+        <div className="flex flex-col gap-2">
           <Logo />
-          <p className="text-xs">Co-signed savings receipts and code-enforced savings circles on QIE.</p>
+          <p className="max-w-sm text-pretty">Co-signed savings receipts and savings circles enforced by code, on the QIE blockchain.</p>
         </div>
-        <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs">
-          <Link href="/stats" className="text-brand hover:underline">
-            Live on-chain stats
-          </Link>
-          <span>Network: {network}</span>
-          <span>No naira held</span>
-          <span>No personal data on-chain</span>
-        </div>
+        <ul className="flex flex-wrap gap-x-5 gap-y-2 text-xs">
+          <li>
+            <Link href="/stats" className="font-semibold text-brand underline-offset-4 hover:underline">
+              Live on-chain stats
+            </Link>
+          </li>
+          <li>Network: {network}</li>
+          <li>Never holds your cash</li>
+          <li>No personal data on-chain</li>
+        </ul>
       </div>
     </footer>
   );

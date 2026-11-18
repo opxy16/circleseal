@@ -1,7 +1,8 @@
 "use client";
 
 import { AlertTriangle, Check, CheckCircle2, Copy, ExternalLink, Info, Loader2, Stamp } from "lucide-react";
-import { useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from "react";
+import { useState, type ButtonHTMLAttributes, type HTMLAttributes, type InputHTMLAttributes, type ReactNode } from "react";
+import { Guilloche } from "./seal";
 
 /* CircleSeal UI kit, in the style of shadcn/ui (MIT): small, composable, token-driven. */
 
@@ -19,17 +20,17 @@ export function Button({
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant; size?: "sm" | "md" | "lg"; loading?: boolean }) {
   const styles: Record<ButtonVariant, string> = {
-    primary: "shimmer bg-brand text-brand-ink shadow-card hover:-translate-y-px hover:bg-brand-strong hover:shadow-lift",
+    primary: "bg-brand text-brand-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.18),0_1px_0_rgb(0_0_0/0.25)] hover:bg-brand-strong",
     secondary: "bg-surface-2 text-ink hover:bg-line",
-    outline: "border border-line bg-surface text-ink shadow-card hover:bg-surface-2",
+    outline: "border border-ink/15 bg-surface text-ink shadow-card hover:border-ink/40",
     ghost: "text-brand hover:bg-brand-soft",
-    destructive: "border border-line bg-surface text-bad hover:bg-bad-soft",
+    destructive: "border border-ink/15 bg-surface text-bad hover:border-bad hover:bg-bad-soft",
   };
   const sizes = { sm: "min-h-9 px-3 text-sm", md: "min-h-11 px-4 text-sm", lg: "min-h-12 px-5 text-base" };
   return (
     <button
       className={cx(
-        "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-colors disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[10px] font-semibold transition-[background-color,border-color,transform] duration-150 active:translate-y-px disabled:pointer-events-none disabled:opacity-50",
         styles[variant],
         sizes[size],
         className,
@@ -43,17 +44,21 @@ export function Button({
   );
 }
 
-export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <section className={cx("rounded-2xl border border-line bg-surface p-5 shadow-card transition-shadow duration-300 hover:shadow-lift", className)}>{children}</section>;
+export function Card({ children, className = "", ...rest }: { children: ReactNode; className?: string } & HTMLAttributes<HTMLElement>) {
+  return (
+    <section className={cx("rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6", className)} {...rest}>
+      {children}
+    </section>
+  );
 }
 
 export function CardHeader({ title, description, action, eyebrow }: { title: ReactNode; description?: ReactNode; action?: ReactNode; eyebrow?: ReactNode }) {
   return (
-    <div className="mb-4 flex items-start justify-between gap-3">
+    <div className="mb-5 flex items-start justify-between gap-3">
       <div className="min-w-0">
-        {eyebrow && <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-stamp">{eyebrow}</p>}
-        <h2 className="text-base font-semibold leading-tight tracking-tight">{title}</h2>
-        {description && <p className="mt-1 text-sm text-muted">{description}</p>}
+        {eyebrow && <p className="mb-1 text-xs font-semibold text-stamp">{eyebrow}</p>}
+        <h2 className="font-wide text-lg font-bold leading-tight tracking-tight">{title}</h2>
+        {description && <p className="mt-1 max-w-prose text-pretty text-sm text-muted">{description}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>
@@ -62,12 +67,17 @@ export function CardHeader({ title, description, action, eyebrow }: { title: Rea
 
 export function PageHeader({ title, description, eyebrow, action }: { title: ReactNode; description?: ReactNode; eyebrow?: ReactNode; action?: ReactNode }) {
   return (
-    <div className="relative flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div aria-hidden className="hero-glow pointer-events-none absolute -inset-x-16 -top-16 bottom-0 -z-10 opacity-80 print:hidden" />
-      <div className="reveal reveal-in min-w-0">
-        {eyebrow && <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-brand">{eyebrow}</p>}
-        <h1 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
-        {description && <p className="mt-2 max-w-prose text-pretty text-sm text-muted sm:text-base">{description}</p>}
+    <div className="relative flex flex-col gap-4 border-b-[3px] border-double border-ink/25 pb-6 sm:flex-row sm:items-end sm:justify-between">
+      <Guilloche size={220} className="pointer-events-none absolute -right-10 -top-16 -z-10 hidden h-56 w-56 text-brand opacity-[0.16] sm:block print:hidden" turn />
+      <div className="min-w-0">
+        {eyebrow && (
+          <p className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-brand">
+            <span className="h-2 w-2 rotate-45 bg-stamp" aria-hidden />
+            {eyebrow}
+          </p>
+        )}
+        <h1 className="font-display text-balance text-[2rem] leading-[1.02] sm:text-[2.75rem]">{title}</h1>
+        {description && <p className="mt-3 max-w-[60ch] text-pretty text-[15px] leading-relaxed text-muted sm:text-base">{description}</p>}
       </div>
       {action}
     </div>
@@ -83,12 +93,12 @@ export function Field({
 }: InputHTMLAttributes<HTMLInputElement> & { label: string; hint?: string; id: string; prefix?: ReactNode }) {
   return (
     <label htmlFor={id} className="flex flex-col gap-1.5 text-sm">
-      <span className="font-medium">{label}</span>
-      <span className="flex min-h-11 items-center rounded-lg border border-line bg-surface shadow-card transition-colors focus-within:border-brand focus-within:ring-2 focus-within:ring-brand-soft">
-        {prefix && <span className="pl-3 text-muted">{prefix}</span>}
+      <span className="font-semibold">{label}</span>
+      <span className="flex min-h-12 items-center rounded-[10px] border border-ink/20 bg-surface transition-colors focus-within:border-brand focus-within:ring-[3px] focus-within:ring-brand-soft">
+        {prefix && <span className="pl-3.5 font-semibold text-muted">{prefix}</span>}
         <input
           id={id}
-          className="h-full min-h-11 w-full min-w-0 rounded-lg bg-transparent px-3 py-2 text-base text-ink outline-none placeholder:text-muted focus-visible:outline-none"
+          className="h-full min-h-12 w-full min-w-0 rounded-[10px] bg-transparent px-3.5 py-2 text-base text-ink outline-none placeholder:text-muted/80 focus-visible:outline-none"
           {...props}
         />
       </span>
@@ -100,15 +110,15 @@ export function Field({
 export function Notice({ tone = "info", children, title }: { tone?: "info" | "ok" | "bad" | "stamp"; children: ReactNode; title?: ReactNode }) {
   const styles = {
     info: { box: "border-line bg-surface-2", icon: <Info className="h-4 w-4 text-muted" aria-hidden /> },
-    ok: { box: "border-brand-soft bg-brand-soft", icon: <CheckCircle2 className="h-4 w-4 text-ok" aria-hidden /> },
-    bad: { box: "border-bad-soft bg-bad-soft", icon: <AlertTriangle className="h-4 w-4 text-bad" aria-hidden /> },
-    stamp: { box: "border-stamp-soft bg-stamp-soft", icon: <Stamp className="h-4 w-4 text-stamp" aria-hidden /> },
+    ok: { box: "border-brand/25 bg-brand-soft", icon: <CheckCircle2 className="h-4 w-4 text-ok" aria-hidden /> },
+    bad: { box: "border-bad/25 bg-bad-soft", icon: <AlertTriangle className="h-4 w-4 text-bad" aria-hidden /> },
+    stamp: { box: "border-stamp/25 bg-stamp-soft", icon: <Stamp className="h-4 w-4 text-stamp" aria-hidden /> },
   }[tone];
   return (
-    <div role={tone === "bad" ? "alert" : undefined} className={cx("flex gap-3 rounded-lg border px-3.5 py-3 text-sm text-ink", styles.box)}>
+    <div role={tone === "bad" ? "alert" : undefined} className={cx("flex gap-3 rounded-xl border px-4 py-3 text-sm leading-relaxed text-ink", styles.box)}>
       <span className="mt-0.5 shrink-0">{styles.icon}</span>
       <div className="min-w-0">
-        {title && <p className="mb-0.5 font-medium">{title}</p>}
+        {title && <p className="mb-0.5 font-semibold">{title}</p>}
         <div className="text-pretty">{children}</div>
       </div>
     </div>
@@ -119,7 +129,7 @@ export function Stat({ label, value, sub }: { label: string; value: ReactNode; s
   return (
     <div className="flex min-w-0 flex-col gap-0.5">
       <span className="text-xs font-medium text-muted">{label}</span>
-      <span className="truncate text-xl font-semibold tabular-nums tracking-tight">{value}</span>
+      <span className="font-wide break-words text-lg font-bold tabular-nums leading-tight tracking-tight sm:text-xl">{value}</span>
       {sub && <span className="text-xs text-muted">{sub}</span>}
     </div>
   );
@@ -128,11 +138,11 @@ export function Stat({ label, value, sub }: { label: string; value: ReactNode; s
 export function Badge({ tone = "neutral", children, className = "" }: { tone?: "neutral" | "brand" | "stamp" | "bad"; children: ReactNode; className?: string }) {
   const styles = {
     neutral: "border-line bg-surface-2 text-muted",
-    brand: "border-brand-soft bg-brand-soft text-brand",
-    stamp: "border-stamp-soft bg-stamp-soft text-stamp",
-    bad: "border-bad-soft bg-bad-soft text-bad",
+    brand: "border-brand/30 bg-brand-soft text-brand",
+    stamp: "border-stamp/30 bg-stamp-soft text-stamp",
+    bad: "border-bad/30 bg-bad-soft text-bad",
   }[tone];
-  return <span className={cx("inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium", styles, className)}>{children}</span>;
+  return <span className={cx("inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-semibold", styles, className)}>{children}</span>;
 }
 
 export function Skeleton({ className = "" }: { className?: string }) {
@@ -152,9 +162,9 @@ export function LoadingCard({ label = "Reading from QIE…" }: { label?: string 
 
 export function EmptyState({ icon, title, children }: { icon: ReactNode; title: string; children?: ReactNode }) {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-line px-6 py-10 text-center">
-      <span className="grid h-11 w-11 place-items-center rounded-full bg-brand-soft text-brand">{icon}</span>
-      <p className="font-medium">{title}</p>
+    <div className="ruled flex flex-col items-center gap-2 rounded-2xl border border-dashed border-ink/25 bg-surface/60 px-6 py-10 text-center">
+      <span className="grid h-12 w-12 place-items-center rounded-full border-2 border-dashed border-brand/50 bg-surface text-brand">{icon}</span>
+      <p className="font-wide font-bold">{title}</p>
       {children && <p className="max-w-sm text-sm text-muted">{children}</p>}
     </div>
   );
@@ -173,8 +183,8 @@ export function Segmented<T extends string | number>({
 }) {
   return (
     <fieldset className="flex flex-col gap-1.5 text-sm">
-      <legend className="mb-1.5 font-medium">{label}</legend>
-      <div className="flex flex-wrap gap-1 rounded-lg border border-line bg-surface-2 p-1">
+      <legend className="mb-1.5 font-semibold">{label}</legend>
+      <div className="flex flex-wrap gap-1 rounded-[12px] border border-ink/15 bg-surface-2 p-1">
         {options.map((o) => (
           <button
             key={String(o.value)}
@@ -182,8 +192,8 @@ export function Segmented<T extends string | number>({
             aria-pressed={value === o.value}
             onClick={() => onChange(o.value)}
             className={cx(
-              "min-h-9 flex-1 rounded-md px-3 text-sm transition-colors",
-              value === o.value ? "bg-surface font-medium text-ink shadow-card" : "text-muted hover:text-ink",
+              "min-h-10 flex-1 rounded-[9px] px-3 text-sm transition-colors",
+              value === o.value ? "bg-ink font-semibold text-bg shadow-card" : "font-medium text-muted hover:text-ink",
             )}
           >
             {o.label}
@@ -235,7 +245,7 @@ export function WhatsAppButton({ href, label = "Share on WhatsApp" }: { href: st
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#1f9d55] px-4 text-sm font-medium text-white shadow-card transition-colors hover:bg-[#1a8a4a]"
+      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] bg-[#167a43] px-4 text-sm font-semibold text-white shadow-card transition-colors hover:bg-[#11653a] active:translate-y-px"
     >
       <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden>
         <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.4-.3Z" />

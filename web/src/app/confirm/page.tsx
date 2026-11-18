@@ -5,8 +5,9 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import type { Address, Hex } from "viem";
 import type { PrivateKeyAccount } from "viem/accounts";
-import { BadgeCheck, PenLine } from "lucide-react";
-import { Button, Card, LoadingCard, Notice, PageHeader, TxLink } from "@/components/ui";
+import { Receipt } from "@/components/seal";
+import { Button, LoadingCard, Notice, PageHeader, TxLink } from "@/components/ui";
+import { primaryLink } from "@/components/styles";
 import { WalletGate } from "@/components/wallet";
 import { AjoPassbookAbi } from "@/lib/abi/AjoPassbook";
 import { relayContribution, relayPayout, type RelayResult } from "@/lib/actions";
@@ -97,29 +98,22 @@ function ConfirmCard({ account, p }: { account: PrivateKeyAccount; p: ConfirmPay
   const when = new Date(Number(base.paidAt) * 1000).toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short" });
 
   return (
-    <Card className="flex flex-col gap-5">
-      <div className="relative rounded-xl border border-line bg-surface-2 p-5">
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-medium text-muted">{isContribution ? "Contribution receipt" : "Payout receipt"}</p>
-          {(done || recorded) && (
-            <span className="rotate-6 rounded border-2 border-stamp px-1.5 text-[10px] font-bold uppercase tracking-widest text-stamp">Co-signed</span>
-          )}
-        </div>
-        <div className="my-4 border-y border-dashed border-line py-5 text-center">
-          <p className="text-4xl font-semibold tabular-nums tracking-tight">{naira(base.amount)}</p>
-          <p className="mt-1 text-sm text-muted">{p.name}</p>
-        </div>
-        <dl className="grid grid-cols-2 gap-y-2 text-sm">
-          <dt className="text-muted">{isContribution ? "For period" : "Cycle"}</dt>
-          <dd className="text-right font-medium">{isContribution ? contribution.period : payout.cycle}</dd>
-          <dt className="text-muted">{isContribution ? "Paid to collector" : "Paid to you"}</dt>
-          <dd className="text-right font-medium">{when}</dd>
-          <dt className="flex items-center gap-1.5 text-muted"><PenLine className="h-3.5 w-3.5" aria-hidden /> Collector</dt>
-          <dd className="flex justify-end"><BadgeCheck className="h-4 w-4 text-ok" aria-label="signed" /></dd>
-          <dt className="flex items-center gap-1.5 text-muted"><PenLine className="h-3.5 w-3.5" aria-hidden /> You</dt>
-          <dd className="text-right">{done || recorded ? <BadgeCheck className="ml-auto h-4 w-4 text-ok" aria-label="signed" /> : <span className="text-muted">waiting</span>}</dd>
-        </dl>
-      </div>
+    <div className="flex flex-col gap-6">
+      <Receipt
+        play={Boolean(done)}
+        title={isContribution ? "CONTRIBUTION RECEIPT" : "PAYOUT RECEIPT"}
+        number={`Group #${p.r.groupId}`}
+        amount={naira(base.amount)}
+        subtitle={p.name}
+        lines={[
+          { label: isContribution ? "For period" : "Cycle", value: isContribution ? contribution.period : payout.cycle },
+          { label: isContribution ? "Paid to collector" : "Paid to you", value: when },
+        ]}
+        memberSigned={Boolean(done || recorded)}
+        memberLabel="You"
+        sealed={Boolean(done || recorded)}
+        footer={done || recorded ? <span>Recorded on QIE · can&apos;t be changed or deleted</span> : undefined}
+      />
 
       {done ? (
         <>
@@ -128,7 +122,7 @@ function ConfirmCard({ account, p }: { account: PrivateKeyAccount; p: ConfirmPay
             <br />
             <TxLink hash={done.hash} explorer={done.explorer} />
           </Notice>
-          <Link href="/me" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-brand px-5 font-medium text-brand-ink shadow-card hover:bg-brand-strong">
+          <Link href="/me" className={primaryLink}>
             See my passbook
           </Link>
         </>
@@ -138,7 +132,7 @@ function ConfirmCard({ account, p }: { account: PrivateKeyAccount; p: ConfirmPay
         <Notice tone="ok">This receipt is already confirmed and recorded.</Notice>
       ) : (
         <>
-          <p className="text-sm text-muted">
+          <p className="text-pretty text-sm text-muted">
             Only confirm if this is correct: you {isContribution ? "paid" : "received"} exactly {naira(base.amount)}.
           </p>
           {error && <Notice tone="bad">{error}</Notice>}
@@ -147,6 +141,6 @@ function ConfirmCard({ account, p }: { account: PrivateKeyAccount; p: ConfirmPay
           </Button>
         </>
       )}
-    </Card>
+    </div>
   );
 }

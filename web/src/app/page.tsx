@@ -1,42 +1,22 @@
-import {
-  ArrowRight,
-  BadgeCheck,
-  BookOpen,
-  CheckCircle2,
-  Coins,
-  EyeOff,
-  Fingerprint,
-  Fuel,
-  HandCoins,
-  LineChart,
-  Link2,
-  MessageCircle,
-  NotebookPen,
-  PenLine,
-  QrCode,
-  RefreshCcw,
-  ShieldCheck,
-  Smartphone,
-  Sparkles,
-  Wallet,
-  XCircle,
-} from "lucide-react";
+import { ArrowRight, Check, EyeOff, Fingerprint, MessageCircle, QrCode, Smartphone, Wallet, X } from "lucide-react";
 import Link from "next/link";
-import { AnimatedList, Aurora, BorderBeam, GradientText, Marquee, PhoneFrame, Reveal } from "@/components/fx";
+import { Marquee } from "@/components/fx";
+import { HeroReceipt } from "@/components/hero-receipt";
 import { LiveStrip } from "@/components/live-strip";
+import { Guilloche, Seal, Signature } from "@/components/seal";
+import { outlineLink, primaryLink } from "@/components/styles";
 import { isDeployed } from "@/lib/config";
 
 export default function Home() {
   return (
     <div className="-mt-8 flex flex-col gap-24 sm:gap-32">
       <Hero />
-      <TrustMarquee />
-      <Reveal>
-        <LiveStrip />
-      </Reveal>
-      <BeforeAfter />
-      <Bento />
+      <Names />
+      <LiveStrip />
+      <NotebookVsPassbook />
+      <TwoModes />
       <HowItWorks />
+      <AlsoIncluded />
       <BuiltOnQie />
       <Faq />
       <FinalCta />
@@ -48,315 +28,250 @@ export default function Home() {
 
 function Hero() {
   return (
-    <section className="relative pb-6 pt-14 sm:pt-20">
-      <div className="absolute inset-y-0 left-1/2 w-screen -translate-x-1/2">
-        <Aurora />
-        <div className="dot-pattern absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,black_20%,transparent_70%)]" aria-hidden />
-      </div>
-      <div className="relative grid items-center gap-14 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="flex flex-col items-start gap-7">
-          <Reveal>
-            <span className="glass inline-flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-xs font-medium text-muted shadow-card">
-              <Sparkles className="h-3.5 w-3.5 text-stamp" aria-hidden />
-              Built on QIE · QIE ID · QIE Oracle · QIEDEX
-            </span>
-          </Reveal>
-          <Reveal delay={80}>
-            <h1 className="text-balance text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
-              Your savings circle, <GradientText>sealed.</GradientText>
-            </h1>
-          </Reveal>
-          <Reveal delay={160}>
-            <p className="max-w-xl text-pretty text-lg text-muted sm:text-xl">
-              Ajo in Nigeria, susu in Ghana, tontines in Cameroon, chamas in Kenya, tandas in Mexico: people everywhere save
-              together on trust. Keep saving the way you already do. Every contribution becomes a receipt signed by you{" "}
-              <em>and</em> your collector, sealed on QIE so nobody can fake it, change it or deny it.
-            </p>
-          </Reveal>
-          {!isDeployed && (
-            <p className="rounded-lg border border-stamp-soft bg-stamp-soft px-3 py-2 text-sm">
-              CircleSeal&apos;s contracts are being deployed to QIE right now. Check back shortly to try it live.
-            </p>
-          )}
-          <Reveal delay={240} className="w-full sm:w-auto">
-            <div className="flex w-full flex-col gap-3 sm:flex-row">
-              <Link
-                href="/collector"
-                className="shimmer inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand px-6 font-medium text-brand-ink shadow-lift transition-transform hover:-translate-y-0.5 hover:bg-brand-strong"
-              >
-                Start a group <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-              <Link
-                href="/me"
-                className="glass inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-line px-6 font-medium shadow-card transition-transform hover:-translate-y-0.5"
-              >
-                Open my passbook
-              </Link>
-            </div>
-          </Reveal>
-          <Reveal delay={320}>
-            <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
-              <li className="flex items-center gap-2"><Smartphone className="h-4 w-4 text-brand" aria-hidden /> No app to install</li>
-              <li className="flex items-center gap-2"><Coins className="h-4 w-4 text-brand" aria-hidden /> No crypto, no fees</li>
-              <li className="flex items-center gap-2"><EyeOff className="h-4 w-4 text-brand" aria-hidden /> No names on-chain</li>
-            </ul>
-          </Reveal>
+    <section className="relative grid items-center gap-14 pt-12 sm:pt-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10">
+      <div className="flex flex-col items-start gap-7">
+        <p className="inline-flex items-center gap-2 rounded-md border border-ink/15 bg-surface px-2.5 py-1 text-sm font-medium text-muted">
+          <span className="h-2 w-2 rotate-45 bg-stamp" aria-hidden />
+          For every ajo, susu, tontine, chama and tanda
+        </p>
+        <h1 className="font-display text-balance text-[2.9rem] leading-[0.95] sm:text-7xl lg:text-[5.4rem]">
+          Your savings circle, sealed on-chain.
+        </h1>
+        <p className="max-w-[54ch] text-pretty text-lg leading-relaxed text-muted">
+          Keep saving the way your group already does. Each payment becomes a receipt signed by you <em>and</em> your
+          collector, then sealed on the QIE blockchain, so nobody can fake it, change it or deny it.
+        </p>
+        {!isDeployed && (
+          <p className="rounded-xl border border-stamp/30 bg-stamp-soft px-4 py-3 text-sm">
+            CircleSeal&apos;s contracts are being deployed to QIE right now. Check back shortly to try it live.
+          </p>
+        )}
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+          <Link href="/collector" className={`${primaryLink} px-6`}>
+            Start a group <ArrowRight className="h-4 w-4" aria-hidden />
+          </Link>
+          <Link href="/me" className={`${outlineLink} px-6`}>
+            Open my passbook
+          </Link>
         </div>
-        <Reveal delay={200}>
-          <HeroPhone />
-        </Reveal>
+        <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
+          <li className="flex items-center gap-2"><Smartphone className="h-4 w-4 text-brand" aria-hidden /> No app to install</li>
+          <li className="flex items-center gap-2"><Wallet className="h-4 w-4 text-brand" aria-hidden /> No crypto, no fees</li>
+          <li className="flex items-center gap-2"><EyeOff className="h-4 w-4 text-brand" aria-hidden /> No names on-chain</li>
+        </ul>
+      </div>
+      <HeroReceipt />
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ names band */
+
+const NAMES = [
+  ["Ajo", "Nigeria"],
+  ["Susu", "Ghana"],
+  ["Tontine", "Cameroon"],
+  ["Chama", "Kenya"],
+  ["Tanda", "Mexico"],
+  ["Stokvel", "South Africa"],
+  ["Arisan", "Indonesia"],
+  ["Paluwagan", "Philippines"],
+  ["Hui", "China"],
+  ["Kye", "Korea"],
+  ["Committee", "Pakistan"],
+  ["Sol", "Haiti"],
+  ["Partner", "Jamaica"],
+];
+
+function Names() {
+  return (
+    <section aria-labelledby="names-title" className="-my-8 flex flex-col gap-5">
+      <h2 id="names-title" className="max-w-[46ch] text-pretty text-sm text-muted">
+        One habit, many names. Hundreds of millions of people save together this way. CircleSeal works for all of them.
+      </h2>
+      <div className="relative left-1/2 w-screen -translate-x-1/2 border-y border-ink/15 bg-surface/70 py-5">
+        <Marquee>
+          {NAMES.map(([name, place], i) => (
+            <span key={name} className="flex items-baseline gap-2.5 pr-6">
+              <span className={`font-display text-4xl sm:text-5xl ${i % 2 ? "text-outline" : ""}`}>{name}</span>
+              <span className="text-xs font-medium text-muted">{place}</span>
+              <span className="ml-4 h-2 w-2 rotate-45 self-center bg-stamp" aria-hidden />
+            </span>
+          ))}
+        </Marquee>
       </div>
     </section>
   );
 }
 
-const FEED = [
-  { who: "Tolu", what: "confirmed ₦2,000 · day 14", icon: BadgeCheck, tone: "text-ok" },
-  { who: "Hostel B Thrift", what: "new member joined from WhatsApp", icon: Link2, tone: "text-brand" },
-  { who: "Ada", what: "received payout ₦60,000", icon: HandCoins, tone: "text-stamp" },
-  { who: "Circle #4", what: "round 3 settled · 40 QUSDC paid out", icon: RefreshCcw, tone: "text-brand" },
-  { who: "Chidi", what: "missed round covered from his own bond", icon: ShieldCheck, tone: "text-bad" },
-  { who: "Ngozi", what: "shared her savings proof with a lender", icon: QrCode, tone: "text-stamp" },
-];
+/* ------------------------------------------------------------------ notebook vs passbook */
 
-/** Illustration of the app on a phone, with a live-looking activity feed. */
-function HeroPhone() {
+function SectionTitle({ id, title, body }: { id: string; title: React.ReactNode; body?: React.ReactNode }) {
   return (
-    <div className="relative mx-auto w-full max-w-sm" aria-label="Illustration of the CircleSeal app">
-      <PhoneFrame className="float-slow">
-        <div className="flex h-full flex-col gap-3 px-4 pb-4 pt-12">
-          <div className="relative overflow-hidden rounded-2xl bg-brand p-4 text-brand-ink">
-            <p className="text-[11px] opacity-80">Total saved</p>
-            <p className="text-3xl font-semibold tracking-tight">₦48,000</p>
-            <div className="mt-3 grid grid-cols-3 gap-2 text-[10px]">
-              <div><p className="opacity-70">Receipts</p><p className="font-semibold">24</p></div>
-              <div><p className="opacity-70">On time</p><p className="font-semibold">100%</p></div>
-              <div><p className="opacity-70">Groups</p><p className="font-semibold">2</p></div>
-            </div>
-            <svg viewBox="0 0 200 200" className="absolute -right-8 -top-8 h-28 w-28 opacity-20" aria-hidden>
-              <circle cx="80" cy="100" r="60" fill="none" stroke="currentColor" strokeWidth="14" />
-              <circle cx="120" cy="100" r="60" fill="none" stroke="currentColor" strokeWidth="14" />
-            </svg>
-          </div>
-          <p className="px-1 text-[11px] font-medium text-muted">Live activity</p>
-          <AnimatedList
-            items={FEED.map((f) => (
-              <div key={f.who + f.what} className="flex items-center gap-2.5 rounded-xl border border-line bg-surface p-2.5 shadow-card">
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-surface-2">
-                  <f.icon className={`h-4 w-4 ${f.tone}`} aria-hidden />
-                </span>
-                <span className="min-w-0 text-[11px] leading-tight">
-                  <span className="block font-semibold">{f.who}</span>
-                  <span className="block truncate text-muted">{f.what}</span>
-                </span>
-              </div>
-            ))}
-          />
-        </div>
-      </PhoneFrame>
-
-      {/* Floating co-signed receipt */}
-      <div className="glass absolute -left-6 bottom-16 hidden w-56 rounded-2xl border border-line p-4 shadow-lift sm:block">
-        <BorderBeam duration={5} />
-        <div className="flex items-center justify-between">
-          <p className="text-[11px] text-muted">Receipt</p>
-          <span className="rotate-6 rounded border-2 border-stamp px-1 text-[9px] font-bold uppercase tracking-widest text-stamp">Co-signed</span>
-        </div>
-        <p className="mt-2 text-2xl font-semibold tracking-tight">₦2,000</p>
-        <div className="mt-2 flex flex-col gap-1 text-[11px] text-muted">
-          <span className="flex items-center justify-between"><span className="flex items-center gap-1"><PenLine className="h-3 w-3" /> Collector</span><CheckCircle2 className="h-3.5 w-3.5 text-ok" /></span>
-          <span className="flex items-center justify-between"><span className="flex items-center gap-1"><PenLine className="h-3 w-3" /> Member</span><CheckCircle2 className="h-3.5 w-3.5 text-ok" /></span>
-        </div>
-      </div>
-
-      {/* Floating .qie badge */}
-      <div className="glass absolute -right-4 top-24 hidden items-center gap-2 rounded-full border border-line px-3 py-2 text-xs font-medium shadow-lift sm:flex">
-        <Wallet className="h-3.5 w-3.5 text-brand" aria-hidden /> tolu.qie
-      </div>
+    <div className="mb-10 max-w-3xl">
+      <h2 id={id} className="font-display text-balance text-[2rem] leading-[1.02] sm:text-5xl">
+        {title}
+      </h2>
+      {body && <p className="mt-4 max-w-[60ch] text-pretty text-lg leading-relaxed text-muted">{body}</p>}
     </div>
   );
 }
 
-/* ------------------------------------------------------------------ marquee */
-
-function TrustMarquee() {
-  const chips = [
-    "Ajo · Susu · Tontine · Chama · Tanda · Stokvel",
-    "Two signatures on every receipt",
-    "Never holds your naira",
-    "Gas-free for members",
-    "Works over WhatsApp",
-    "No names on-chain",
-    "Payout holdback: no walk-aways",
-    "Savings proof for lenders",
-    "Open-source contracts",
-    "QIE ID names",
-    "Priced by the QIE Oracle",
+function NotebookVsPassbook() {
+  const rows = [
+    ["“I paid.” “You didn’t.” One word against another", "Every payment signed by both sides"],
+    ["A notebook only the collector can see", "A public record anyone can check, with no names on it"],
+    ["Collector disappears, and your history goes too", "Your passbook lives on QIE, not in anyone’s bag"],
+    ["Early recipient stops paying, everyone after loses", "Payout holdback prepays early recipients’ rounds"],
+    ["Years of saving, nothing a lender will accept", "A savings proof page you can share in one tap"],
   ];
   return (
-    <section aria-label="Highlights" className="-my-10">
-      <Marquee>
-        {chips.map((c) => (
-          <span key={c} className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-line bg-surface px-4 py-2 text-sm text-muted shadow-card">
-            <CheckCircle2 className="h-4 w-4 text-brand" aria-hidden /> {c}
-          </span>
-        ))}
-      </Marquee>
-    </section>
-  );
-}
-
-/* ------------------------------------------------------------------ before / after */
-
-function SectionTitle({ eyebrow, title, body }: { eyebrow: string; title: React.ReactNode; body?: string }) {
-  return (
-    <Reveal className="mx-auto mb-12 max-w-2xl text-center">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">{eyebrow}</p>
-      <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight sm:text-5xl">{title}</h2>
-      {body && <p className="mt-4 text-pretty text-lg text-muted">{body}</p>}
-    </Reveal>
-  );
-}
-
-function BeforeAfter() {
-  const before = [
-    "\"I paid.\" \"You didn't.\" One word against another",
-    "A notebook only the collector can see",
-    "Collector disappears, savings history goes with them",
-    "Early recipient stops paying, everyone after loses",
-    "Years of saving, nothing a lender will accept",
-  ];
-  const after = [
-    "Every payment co-signed by both sides",
-    "A public record anyone can check, with no names on it",
-    "Your passbook lives on QIE, not in anyone's bag",
-    "Payout holdback prepays early recipients' rounds",
-    "A savings proof page you can share in one tap",
-  ];
-  return (
-    <section>
-      <SectionTitle eyebrow="Why it matters" title={<>Savings groups run on trust. <GradientText>Now they run on proof.</GradientText></>} />
-      <div className="grid gap-5 md:grid-cols-2">
-        <Reveal>
-          <div className="h-full rounded-3xl border border-line bg-surface p-7 shadow-card">
-            <div className="mb-5 flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-bad-soft text-bad"><NotebookPen className="h-5 w-5" aria-hidden /></span>
-              <h3 className="text-lg font-semibold">The notebook way</h3>
-            </div>
-            <ul className="flex flex-col gap-3.5">
-              {before.map((b) => (
-                <li key={b} className="flex gap-3 text-sm text-muted"><XCircle className="mt-0.5 h-4 w-4 shrink-0 text-bad" aria-hidden /> {b}</li>
-              ))}
-            </ul>
-          </div>
-        </Reveal>
-        <Reveal delay={120}>
-          <div className="relative h-full overflow-hidden rounded-3xl border border-line bg-surface p-7 shadow-lift">
-            <BorderBeam duration={8} />
-            <div className="mb-5 flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand text-brand-ink"><ShieldCheck className="h-5 w-5" aria-hidden /></span>
-              <h3 className="text-lg font-semibold">With CircleSeal</h3>
-            </div>
-            <ul className="flex flex-col gap-3.5">
-              {after.map((a) => (
-                <li key={a} className="flex gap-3 text-sm"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-ok" aria-hidden /> {a}</li>
-              ))}
-            </ul>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-/* ------------------------------------------------------------------ bento */
-
-function Tile({ className = "", children, delay = 0 }: { className?: string; children: React.ReactNode; delay?: number }) {
-  return (
-    <Reveal delay={delay} className={className}>
-      <div className="group relative h-full overflow-hidden rounded-3xl border border-line bg-surface p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
-        {children}
-      </div>
-    </Reveal>
-  );
-}
-
-function TileHead({ icon: Icon, title, body, tone = "brand" }: { icon: typeof BookOpen; title: string; body: string; tone?: "brand" | "stamp" }) {
-  return (
-    <>
-      <span className={`grid h-10 w-10 place-items-center rounded-xl ${tone === "brand" ? "bg-brand-soft text-brand" : "bg-stamp-soft text-stamp"}`}>
-        <Icon className="h-5 w-5" aria-hidden />
-      </span>
-      <h3 className="mt-4 text-lg font-semibold tracking-tight">{title}</h3>
-      <p className="mt-1.5 text-sm text-muted">{body}</p>
-    </>
-  );
-}
-
-function Bento() {
-  return (
-    <section>
-      <SectionTitle
-        eyebrow="Two ways to save"
-        title={<>Keep your circle. <GradientText>Add proof.</GradientText></>}
-        body="Start with receipts for the group you already have, or run a dollar circle where the rules are enforced by code."
-      />
-      <div className="grid auto-rows-[minmax(220px,auto)] gap-5 md:grid-cols-3">
-        <Tile className="md:col-span-2">
-          <TileHead icon={BookOpen} title="Passbook mode: two signatures, one truth" body="Cash and transfer savings groups with co-signed receipts. The collector records it, the member confirms it, and QIE keeps it forever." />
-          <div className="mt-6 flex flex-wrap items-center gap-3 text-sm">
-            {["Collector signs", "Member confirms", "Recorded on QIE"].map((s, i) => (
-              <span key={s} className="flex items-center gap-3">
-                <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface-2 px-3 py-1.5">
-                  <span className="grid h-5 w-5 place-items-center rounded-full bg-brand text-[10px] font-bold text-brand-ink">{i + 1}</span>
-                  {s}
+    <section aria-labelledby="why-title">
+      <SectionTitle id="why-title" title="Savings groups run on trust. Now they can run on proof." />
+      <div className="grid gap-6 md:grid-cols-2">
+        <div className="relative rounded-2xl border border-ink/10 bg-surface-2/60 p-6 sm:p-8">
+          <h3 className="font-wide text-lg font-bold">The notebook</h3>
+          <p className="text-sm text-muted">How most groups keep records today</p>
+          <ul className="ruled mt-6 flex flex-col">
+            {rows.map(([before]) => (
+              <li key={before} className="flex min-h-10 items-center gap-3 text-[15px] text-muted">
+                <X className="h-4 w-4 shrink-0 text-bad" aria-hidden />
+                <span className="line-through decoration-bad/50 decoration-[1.5px]">{before}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="relative overflow-hidden rounded-2xl border border-ink/15 bg-surface p-6 shadow-lift sm:p-8">
+          <Seal className="absolute -right-6 -top-6 opacity-90" size={120} angle={14} center="PROOF" />
+          <h3 className="font-wide text-lg font-bold">The CircleSeal passbook</h3>
+          <p className="text-sm text-muted">Same group, same habits, now with receipts</p>
+          <ul className="ruled mt-6 flex flex-col">
+            {rows.map(([, after]) => (
+              <li key={after} className="flex min-h-10 items-center gap-3 text-[15px]">
+                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand text-brand-ink">
+                  <Check className="h-3 w-3" strokeWidth={3} aria-hidden />
                 </span>
-                {i < 2 && <ArrowRight className="h-4 w-4 text-muted" aria-hidden />}
-              </span>
+                {after}
+              </li>
             ))}
-          </div>
-        </Tile>
-        <Tile delay={80}>
-          <TileHead icon={Fuel} title="Gas-free for members" body="No crypto to buy, ever. CircleSeal's relayer pays every passbook fee." />
-          <p className="mt-5 text-4xl font-semibold tracking-tight text-brand">₦0</p>
-          <p className="text-xs text-muted">what members pay in network fees</p>
-        </Tile>
-        <Tile delay={40}>
-          <TileHead icon={RefreshCcw} tone="stamp" title="Circle mode, enforced by code" body="Stablecoin rotation with bonds. Anyone can settle a round, so nobody can stall it." />
-          <div className="mt-5 flex -space-x-2">
-            {["A", "T", "C", "N", "K"].map((l, i) => (
-              <span key={l} className={`grid h-9 w-9 place-items-center rounded-full border-2 border-surface text-xs font-semibold ${i === 1 ? "bg-stamp text-white" : "bg-surface-2"}`}>{l}</span>
-            ))}
-          </div>
-          <p className="mt-2 text-xs text-muted">Round 2 of 5 · pot goes to T</p>
-        </Tile>
-        <Tile delay={120} className="md:col-span-2">
-          <TileHead icon={ShieldCheck} tone="stamp" title="Payout holdback: nobody walks away with the pot" body="When someone gets paid early, part of the pot prepays their remaining rounds. Skip anyway, and it comes out of their own money, never yours." />
-          <div className="mt-6 grid grid-cols-4 gap-2 text-center text-[11px]">
-            {[
-              { r: "Round 1", t: "Ada gets 20 now, 20 held", c: "bg-stamp-soft" },
-              { r: "Round 2", t: "Prepaid from holdback", c: "bg-brand-soft" },
-              { r: "Round 3", t: "Prepaid from holdback", c: "bg-brand-soft" },
-              { r: "Round 4", t: "Ada pays, or her bond does", c: "bg-surface-2" },
-            ].map((x) => (
-              <div key={x.r} className={`rounded-xl p-3 ${x.c}`}>
-                <p className="font-semibold">{x.r}</p>
-                <p className="mt-1 text-muted">{x.t}</p>
-              </div>
-            ))}
-          </div>
-        </Tile>
-        <Tile delay={60}>
-          <TileHead icon={QrCode} title="Savings proof for lenders" body="Share how long, how consistently and how much you've saved, checked live on-chain, as a link, QR code or PDF." />
-        </Tile>
-        <Tile delay={100}>
-          <TileHead icon={Fingerprint} title="Private by design" body="Group names are stored as fingerprints, members as codes. No names or phone numbers, ever." />
-        </Tile>
-        <Tile delay={140}>
-          <TileHead icon={MessageCircle} title="Lives on WhatsApp" body="Invites and receipts are links. Tap, enter your PIN, done. No app store, no sign-up form." />
-        </Tile>
+          </ul>
+        </div>
       </div>
     </section>
+  );
+}
+
+/* ------------------------------------------------------------------ two modes */
+
+function TwoModes() {
+  return (
+    <section aria-labelledby="modes-title">
+      <SectionTitle
+        id="modes-title"
+        title="Two ways to save."
+        body="Add receipts to the group you already run, or start a dollar savings circle where the rules are enforced by code."
+      />
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Passbook mode */}
+        <article className="flex flex-col rounded-2xl border border-ink/15 bg-surface p-6 shadow-card sm:p-8">
+          <p className="text-sm font-semibold text-brand">Passbook mode</p>
+          <h3 className="mt-1 font-wide text-2xl font-bold leading-tight">Two signatures, one truth.</h3>
+          <p className="mt-2 max-w-[52ch] text-pretty text-muted">
+            For cash and bank-transfer groups. The collector records a payment, the member confirms it, and QIE keeps it
+            forever. Members never pay a network fee.
+          </p>
+          <ol className="mt-8 grid gap-3 sm:grid-cols-3 lg:my-auto lg:py-6">
+            {[
+              { who: "Collector", what: "records and signs", seed: 0 },
+              { who: "Member", what: "taps Confirm", seed: 1 },
+            ].map((s) => (
+              <li key={s.who} className="rounded-xl border border-ink/10 bg-bg/60 p-4">
+                <Signature seed={s.seed} className="h-7 w-24 text-ink" />
+                <p className="mt-2 border-t border-ink/30 pt-2 text-sm font-semibold">{s.who}</p>
+                <p className="text-xs text-muted">{s.what}</p>
+              </li>
+            ))}
+            <li className="relative grid place-items-center rounded-xl border border-dashed border-stamp/50 bg-stamp-soft/50 p-4">
+              <Seal size={76} angle={-8} center="QIE" />
+              <p className="mt-1 text-xs font-semibold text-stamp">Sealed on-chain</p>
+            </li>
+          </ol>
+          <div className="mt-8 flex items-end justify-between gap-4 border-t border-ink/10 pt-6 lg:mt-auto">
+            <div>
+              <p className="font-display text-5xl text-brand">₦0</p>
+              <p className="text-sm text-muted">what members pay in network fees</p>
+            </div>
+            <Link href="/collector" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-brand underline-offset-4 hover:underline">
+              Start a group <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
+        </article>
+
+        {/* Circle mode: an inverted, ink-coloured panel */}
+        <article className="relative flex flex-col overflow-hidden rounded-2xl bg-ink p-6 text-bg shadow-lift sm:p-8">
+          <Guilloche size={300} rings={2} lines={9} k={10} className="pointer-events-none absolute -bottom-24 -right-24 h-80 w-80 text-bg opacity-15" />
+          <p className="text-sm font-semibold text-stamp-soft">Circle mode</p>
+          <h3 className="mt-1 font-wide text-2xl font-bold leading-tight">A rotation nobody can run off with.</h3>
+          <p className="mt-2 max-w-[52ch] text-pretty opacity-80">
+            Everyone posts a bond and pays each round in a dollar stablecoin. The pot goes to a different member each time.
+            Anyone can settle a round, so nobody can stall it.
+          </p>
+          <div className="relative mt-6 grid items-center gap-6 sm:grid-cols-[180px_1fr]">
+            <RotationRing />
+            <div>
+              <p className="text-sm font-semibold">The payout holdback</p>
+              <p className="mt-1 text-sm opacity-80">
+                Paid early? Part of your pot prepays your remaining rounds. Skip anyway, and it comes out of your own bond,
+                never the group&apos;s money.
+              </p>
+            </div>
+          </div>
+          <ol className="relative mt-6 grid grid-cols-4 gap-1.5 text-center text-[11px] leading-snug">
+            {[
+              { r: "Round 1", t: "Ada gets 20, 20 held back", c: "bg-stamp text-surface" },
+              { r: "Round 2", t: "Prepaid from holdback", c: "bg-bg/15" },
+              { r: "Round 3", t: "Prepaid from holdback", c: "bg-bg/15" },
+              { r: "Round 4", t: "Ada pays, or her bond does", c: "border border-bg/30" },
+            ].map((x) => (
+              <li key={x.r} className={`rounded-lg p-2.5 ${x.c}`}>
+                <p className="font-bold">{x.r}</p>
+                <p className="mt-0.5 opacity-85">{x.t}</p>
+              </li>
+            ))}
+          </ol>
+          <Link href="/circles" className="relative mt-6 inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-semibold text-bg underline-offset-4 hover:underline">
+            Try a savings circle <ArrowRight className="h-4 w-4" aria-hidden />
+          </Link>
+        </article>
+      </div>
+    </section>
+  );
+}
+
+/** Five members around a ring; the pot (the stamp-coloured dot) is with member two this round. */
+function RotationRing() {
+  const members = ["A", "T", "C", "N", "K"];
+  return (
+    <svg viewBox="0 0 180 180" className="mx-auto h-44 w-44" role="img" aria-label="Five members in a circle. This round, the pot goes to the second member.">
+      <circle cx="90" cy="90" r="62" fill="none" stroke="currentColor" strokeOpacity="0.3" strokeDasharray="3 5" />
+      <path d="M90 28 A62 62 0 0 1 149 71" fill="none" stroke="var(--stamp)" strokeWidth="3" strokeLinecap="round" />
+      {members.map((m, i) => {
+        const a = (i / members.length) * Math.PI * 2 - Math.PI / 2;
+        const x = 90 + 62 * Math.cos(a);
+        const y = 90 + 62 * Math.sin(a);
+        const now = i === 1;
+        return (
+          <g key={m}>
+            <circle cx={x} cy={y} r={now ? 17 : 14} fill={now ? "var(--stamp)" : "var(--ink)"} stroke="currentColor" strokeOpacity={now ? 0 : 0.5} />
+            <text x={x} y={y + 4} textAnchor="middle" fontSize="12" fontWeight="700" fill="currentColor">
+              {m}
+            </text>
+          </g>
+        );
+      })}
+      <text x="90" y="86" textAnchor="middle" fontSize="11" fill="currentColor" opacity="0.7">Round 2 of 5</text>
+      <text x="90" y="102" textAnchor="middle" fontSize="13" fontWeight="700" fill="currentColor">Pot to T</text>
+    </svg>
   );
 }
 
@@ -364,28 +279,47 @@ function Bento() {
 
 function HowItWorks() {
   const steps = [
-    { icon: Link2, title: "Invite", body: "The collector sends a one-time invite link on WhatsApp. Members tap it, set a PIN, and they're in." },
-    { icon: HandCoins, title: "Pay and record", body: "Pay the way you always do. The collector records it and sends a confirm link." },
-    { icon: BadgeCheck, title: "Confirm", body: "Tap Confirm. The receipt, signed by both of you, is on QIE for good." },
+    { title: "Invite", body: "The collector sends a one-time invite link on WhatsApp. Members tap it, choose a PIN, and they're in." },
+    { title: "Pay and record", body: "Members pay the way they always do. The collector records the payment and sends a confirm link." },
+    { title: "Confirm", body: "The member taps Confirm. The receipt, signed by both of them, is sealed on QIE for good." },
   ];
   return (
-    <section>
-      <SectionTitle eyebrow="How it works" title="Three taps. Zero crypto." />
-      <div className="relative grid gap-5 md:grid-cols-3">
-        <div aria-hidden className="absolute left-[16%] right-[16%] top-11 hidden h-px bg-gradient-to-r from-transparent via-brand to-transparent md:block" />
-        {steps.map(({ icon: Icon, title, body }, i) => (
-          <Reveal key={title} delay={i * 120}>
-            <div className="relative flex flex-col items-center gap-3 rounded-3xl border border-line bg-surface p-7 text-center shadow-card">
-              <span className="relative grid h-14 w-14 place-items-center rounded-2xl bg-brand text-brand-ink shadow-lift">
-                <Icon className="h-6 w-6" aria-hidden />
-                <span className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full bg-stamp text-[11px] font-bold text-white">{i + 1}</span>
-              </span>
-              <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
-              <p className="text-sm text-muted">{body}</p>
-            </div>
-          </Reveal>
+    <section aria-labelledby="how-title">
+      <SectionTitle id="how-title" title="Three taps. No crypto." />
+      <ol className="grid gap-px overflow-hidden rounded-2xl border border-ink/15 bg-ink/15 md:grid-cols-3">
+        {steps.map(({ title, body }, i) => (
+          <li key={title} className="flex flex-col gap-3 bg-surface p-6 sm:p-8">
+            <span className="font-display text-6xl leading-none text-stamp" aria-hidden>
+              {i + 1}
+            </span>
+            <h3 className="font-wide text-xl font-bold">{title}</h3>
+            <p className="text-pretty text-muted">{body}</p>
+          </li>
         ))}
-      </div>
+      </ol>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ also included */
+
+function AlsoIncluded() {
+  const items = [
+    { icon: QrCode, title: "Savings proof for lenders", body: "Share how long, how steadily and how much you've saved, checked live on-chain, as a link, QR code or PDF." },
+    { icon: Fingerprint, title: "Private by design", body: "Group names are stored as fingerprints and members as codes. No names or phone numbers, ever." },
+    { icon: MessageCircle, title: "Lives on WhatsApp", body: "Invites, receipts and payment reminders are links. Tap, enter your PIN, done." },
+  ];
+  return (
+    <section aria-label="Also included" className="grid gap-10 border-y-[3px] border-double border-ink/20 py-12 md:grid-cols-3">
+      {items.map(({ icon: Icon, title, body }) => (
+        <div key={title} className="flex gap-4">
+          <Icon className="mt-1 h-6 w-6 shrink-0 text-stamp" aria-hidden />
+          <div>
+            <h3 className="font-wide font-bold">{title}</h3>
+            <p className="mt-1 text-pretty text-sm leading-relaxed text-muted">{body}</p>
+          </div>
+        </div>
+      ))}
     </section>
   );
 }
@@ -394,28 +328,22 @@ function HowItWorks() {
 
 function BuiltOnQie() {
   const items = [
-    { icon: ShieldCheck, name: "QIE blockchain", body: "Fast, cheap finality, so CircleSeal can pay every member's fees." },
-    { icon: Wallet, name: "QIE ID", body: "Members show up as tolu.qie, and proof links work by name." },
-    { icon: LineChart, name: "QIE Oracle", body: "Live QIE/USDT price turns fees and balances into dollars." },
-    { icon: RefreshCcw, name: "QIEDEX", body: "Swap QUSDC for QIE in-app so circle wallets pay their own fees." },
+    { name: "QIE blockchain", body: "Fast, low-cost finality, so CircleSeal can pay every member's fees." },
+    { name: "QIE ID", body: "Members show up as names like tolu.qie, and proof links work by name." },
+    { name: "QIE Oracle", body: "The live QIE/USDT price turns fees and balances into dollars." },
+    { name: "QIEDEX", body: "Swap the circle stablecoin for QIE in the app, so circle wallets can pay their own fees." },
   ];
   return (
-    <section className="relative">
-      <div className="absolute inset-y-0 left-1/2 w-screen -translate-x-1/2 bg-surface-2" aria-hidden />
-      <div className="relative py-16">
-        <SectionTitle eyebrow="Built on QIE" title={<>Native to the <GradientText>QIE ecosystem</GradientText></>} />
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map(({ icon: Icon, name, body }, i) => (
-            <Reveal key={name} delay={i * 80}>
-              <div className="h-full rounded-3xl border border-line bg-surface p-6 shadow-card">
-                <Icon className="h-6 w-6 text-brand" aria-hidden />
-                <h3 className="mt-4 font-semibold">{name}</h3>
-                <p className="mt-1.5 text-sm text-muted">{body}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
+    <section aria-labelledby="qie-title">
+      <SectionTitle id="qie-title" title="Built on QIE, end to end." />
+      <dl className="grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+        {items.map(({ name, body }) => (
+          <div key={name} className="border-t-2 border-ink pt-4">
+            <dt className="font-wide font-bold">{name}</dt>
+            <dd className="mt-1.5 text-pretty text-sm leading-relaxed text-muted">{body}</dd>
+          </div>
+        ))}
+      </dl>
     </section>
   );
 }
@@ -424,30 +352,30 @@ function BuiltOnQie() {
 
 function Faq() {
   const items = [
-    { q: "Do members need crypto or a crypto app?", a: "No. A wallet is created in the browser, locked with a 6-digit PIN, and CircleSeal pays the network fees for passbook actions." },
-    { q: "Does CircleSeal hold our money?", a: "Not in passbook mode: your naira never touches CircleSeal. In circle mode, the stablecoin pot is held by the open-source circle contract, never by us, and only its fixed rules can move it." },
-    { q: "What exactly goes on the blockchain?", a: "Amounts, dates, an opaque member code and both signatures. Group names are stored only as a fingerprint, and no names or phone numbers are ever published." },
+    { q: "Do members need crypto or a crypto app?", a: "No. A wallet is created in the browser and locked with a 6-digit PIN, and CircleSeal pays the network fees for passbook actions." },
+    { q: "Does CircleSeal hold our money?", a: "Not in passbook mode: your cash never touches CircleSeal. In circle mode, the stablecoin pot is held by the open-source circle contract, never by us, and only its fixed rules can move it." },
+    { q: "What exactly goes on the blockchain?", a: "Amounts, dates, an anonymous member code and both signatures. Group names are stored only as a fingerprint, and no names or phone numbers are ever published." },
     { q: "Can a collector fake or edit a receipt?", a: "No. A receipt needs the member's signature too, each payment reference can be used once, and recorded receipts can't be changed or deleted." },
     { q: "What stops someone taking the circle pot and leaving?", a: "The payout holdback. When you're paid early, part of the pot prepays your remaining rounds; anything you still skip comes out of your own bond." },
   ];
   return (
-    <section className="mx-auto w-full max-w-3xl">
-      <SectionTitle eyebrow="Questions" title="Good to know" />
-      <Reveal>
-        <div className="divide-y divide-line rounded-3xl border border-line bg-surface shadow-card">
-          {items.map(({ q, a }) => (
-            <details key={q} className="group px-6 py-5">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium [&::-webkit-details-marker]:hidden">
-                {q}
-                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-surface-2 text-lg leading-none text-muted transition-transform group-open:rotate-45" aria-hidden>
-                  +
-                </span>
-              </summary>
-              <p className="mt-3 text-sm text-muted">{a}</p>
-            </details>
-          ))}
-        </div>
-      </Reveal>
+    <section aria-labelledby="faq-title" className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+      <h2 id="faq-title" className="font-display text-[2rem] leading-[1.02] sm:text-5xl">
+        Good to know.
+      </h2>
+      <div className="border-t-2 border-ink">
+        {items.map(({ q, a }) => (
+          <details key={q} className="group border-b border-ink/15">
+            <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-4 font-semibold [&::-webkit-details-marker]:hidden">
+              {q}
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-ink/20 text-lg leading-none transition-transform duration-300 group-open:rotate-45" aria-hidden>
+                +
+              </span>
+            </summary>
+            <p className="max-w-[62ch] pb-5 text-pretty leading-relaxed text-muted">{a}</p>
+          </details>
+        ))}
+      </div>
     </section>
   );
 }
@@ -456,26 +384,28 @@ function Faq() {
 
 function FinalCta() {
   return (
-    <Reveal>
-      <section className="relative overflow-hidden rounded-[2rem] bg-brand px-6 py-16 text-center text-brand-ink shadow-lift sm:px-12">
-        <BorderBeam duration={7} />
-        <div className="dot-pattern absolute inset-0 opacity-20" aria-hidden />
-        <div className="relative">
-          <h2 className="mx-auto max-w-2xl text-balance text-3xl font-semibold tracking-tight sm:text-5xl">No more &ldquo;I paid&rdquo;, &ldquo;you didn&apos;t&rdquo;.</h2>
-          <p className="mx-auto mt-4 max-w-lg text-lg opacity-90">Set up your group in a minute and send the first invite link today.</p>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/collector" className="shimmer inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-surface px-6 font-medium text-ink shadow-lift transition-transform hover:-translate-y-0.5">
+    <section className="relative overflow-hidden rounded-3xl bg-brand px-6 py-14 text-brand-ink sm:px-12 sm:py-16">
+      <Guilloche size={400} rings={3} lines={9} k={12} className="pointer-events-none absolute -right-24 -top-24 h-[30rem] w-[30rem] opacity-25" />
+      <div className="relative grid items-center gap-8 md:grid-cols-[1fr_auto]">
+        <div>
+          <h2 className="font-display max-w-[16ch] text-balance text-4xl leading-[1] sm:text-6xl">No more &ldquo;I paid&rdquo;, &ldquo;you didn&apos;t&rdquo;.</h2>
+          <p className="mt-4 max-w-[46ch] text-lg opacity-90">Set up your group in a minute and send the first invite link today.</p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href="/collector"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[10px] bg-bg px-6 font-semibold text-ink transition-transform hover:-translate-y-px active:translate-y-px"
+            >
               Start a group <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
-            <Link href="/circles" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/40 px-6 font-medium transition-colors hover:bg-white/10">
-              Try a savings circle
-            </Link>
-            <Link href="/stats" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 font-medium underline-offset-4 hover:underline">
+            <Link href="/stats" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[10px] border border-brand-ink/40 px-6 font-semibold transition-colors hover:bg-black/10">
               See live stats
             </Link>
           </div>
         </div>
-      </section>
-    </Reveal>
+        <div className="hidden rounded-full bg-bg p-2 md:block">
+          <Seal size={180} angle={-10} center="SEALED" />
+        </div>
+      </div>
+    </section>
   );
 }

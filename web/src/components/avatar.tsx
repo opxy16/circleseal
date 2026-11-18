@@ -1,4 +1,6 @@
-/** Initials avatar with a stable colour picked from the wallet address. */
+import type { CSSProperties } from "react";
+
+/** Initials avatar with a stable hue picked from the wallet address (readable in light and dark). */
 const HUES = [152, 170, 200, 32, 260, 340, 12, 90];
 
 export function Avatar({ seed, name, size = 36 }: { seed: string; name: string; size?: number }) {
@@ -15,8 +17,8 @@ export function Avatar({ seed, name, size = 36 }: { seed: string; name: string; 
   return (
     <span
       aria-hidden
-      className="grid shrink-0 place-items-center rounded-full text-xs font-semibold"
-      style={{ width: size, height: size, background: `hsl(${hue} 55% 92%)`, color: `hsl(${hue} 60% 28%)` }}
+      className="avatar grid shrink-0 place-items-center rounded-full text-xs font-bold"
+      style={{ width: size, height: size, "--h": hue } as CSSProperties}
     >
       {initials}
     </span>

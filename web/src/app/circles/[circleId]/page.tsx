@@ -8,7 +8,7 @@ import { keccak256, toBytes, type Address } from "viem";
 import type { PrivateKeyAccount } from "viem/accounts";
 import { Avatar } from "@/components/avatar";
 import { Funds } from "@/components/funds";
-import { BorderBeam } from "@/components/fx";
+import { Guilloche } from "@/components/seal";
 import { Badge, Button, Card, CardHeader, CopyButton, LoadingCard, Notice, Stat, TxLink, WhatsAppButton } from "@/components/ui";
 import { WalletGate } from "@/components/wallet";
 import {
@@ -171,11 +171,11 @@ function Circle({ id, account }: { id: bigint; account: PrivateKeyAccount }) {
     <>
       {/* Overview */}
       <Card className="relative overflow-hidden p-0">
-        {circle.status === "Active" && <BorderBeam duration={6} />}
-        <div className="flex items-start justify-between gap-3 p-5">
+        <Guilloche size={260} rings={2} lines={9} k={11} className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 text-stamp opacity-20" turn={circle.status === "Active"} />
+        <div className="relative flex items-start justify-between gap-3 p-5 sm:p-6">
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-wider text-stamp">Savings circle</p>
-            <h1 className="mt-1 text-balance break-words text-2xl font-semibold tracking-tight">{label}</h1>
+            <p className="text-xs font-semibold text-stamp">Savings circle</p>
+            <h1 className="font-display mt-1 text-balance break-words text-3xl leading-[1.05]">{label}</h1>
             <p className="mt-1 text-sm text-muted">
               {roundLabel(circle.roundDuration)} · organised by {who(circle.organizer)}
             </p>
@@ -196,8 +196,13 @@ function Circle({ id, account }: { id: bigint; account: PrivateKeyAccount }) {
                 {circle.settledRounds} of {circle.memberCount}
               </span>
             </div>
-            <div className="h-2 overflow-hidden rounded-full bg-surface-2" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
-              <div className="h-full rounded-full bg-brand transition-all" style={{ width: `${progress}%` }} />
+            <div className="flex gap-1" role="progressbar" aria-label="Rounds settled" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
+              {Array.from({ length: circle.memberCount }, (_, i) => (
+                <span
+                  key={i}
+                  className={`h-2.5 flex-1 rounded-sm transition-colors duration-500 ${i < circle.settledRounds ? "bg-brand" : i === circle.settledRounds && circle.status === "Active" ? "bg-stamp" : "bg-surface-2"}`}
+                />
+              ))}
             </div>
           </div>
         )}
@@ -266,10 +271,10 @@ function Circle({ id, account }: { id: bigint; account: PrivateKeyAccount }) {
             <>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-stamp">
+                  <p className="text-xs font-semibold text-stamp">
                     Round {round + 1} of {circle.memberCount}
                   </p>
-                  <p className="mt-1 text-lg font-semibold tracking-tight">
+                  <p className="mt-1 font-wide text-xl font-bold tracking-tight">
                     {fmt(pot, token)} goes to {who(rotation[round].address)}
                   </p>
                   <p className="text-sm text-muted">
@@ -280,7 +285,7 @@ function Circle({ id, account }: { id: bigint; account: PrivateKeyAccount }) {
                   <p className="flex items-center justify-end gap-1 text-xs text-muted">
                     <Clock className="h-3 w-3" aria-hidden /> Ends in
                   </p>
-                  <p className="font-mono text-lg font-medium tabular-nums">{untilLabel(roundEndsIn)}</p>
+                  <p className="font-display text-lg tabular-nums">{untilLabel(roundEndsIn)}</p>
                 </div>
               </div>
               {me &&

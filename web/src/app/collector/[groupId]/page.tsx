@@ -77,8 +77,8 @@ function Group({ account, groupId }: { account: PrivateKeyAccount; groupId: bigi
       <Card className="p-0">
         <div className="flex items-start justify-between gap-3 p-5">
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-wider text-stamp">Collector view</p>
-            <h1 className="mt-1 text-balance break-words text-2xl font-semibold tracking-tight">{name}</h1>
+            <p className="text-xs font-semibold text-stamp">Collector view</p>
+            <h1 className="font-display mt-1 text-balance break-words text-3xl leading-[1.05]">{name}</h1>
             <p className="mt-1 text-sm text-muted">
               {naira(group.contributionAmount)} {periodLabel(group.periodSeconds)} · group #{String(groupId)}
             </p>
@@ -93,13 +93,13 @@ function Group({ account, groupId }: { account: PrivateKeyAccount; groupId: bigi
       </Card>
 
       {share && (
-        <Card className="flex flex-col gap-4 border-brand">
+        <Card className="flex flex-col gap-4 border-brand/60 border-l-[6px] border-l-stamp bg-brand-soft/40">
           <CardHeader
             eyebrow="Ready to send"
             title={share.title}
             description="Send it on WhatsApp or copy it. The link carries your signature, so nobody can tamper with it."
           />
-          <p className="break-all rounded-lg border border-line bg-surface-2 p-3 font-mono text-xs text-muted">{share.url}</p>
+          <p className="max-h-24 overflow-y-auto break-all rounded-lg border border-ink/10 bg-surface p-3 font-mono text-xs text-muted">{share.url}</p>
           <div className="flex flex-wrap gap-2">
             <WhatsAppButton href={whatsappShare(`${share.message}\n${share.url}`)} label="Send on WhatsApp" />
             <CopyButton text={share.url} />
@@ -158,7 +158,7 @@ function Members({
               href={whatsappShare(groupReminder)}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-line bg-surface px-3 text-xs font-medium shadow-card hover:bg-surface-2"
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-[10px] border border-ink/15 bg-surface px-3 text-xs font-semibold shadow-card hover:border-ink/40"
             >
               <BellRing className="h-3.5 w-3.5 text-stamp" aria-hidden /> Remind group
             </a>
@@ -209,7 +209,7 @@ function Members({
                       target="_blank"
                       rel="noreferrer"
                       aria-label={`Send ${label(m)} a reminder on WhatsApp`}
-                      className="inline-flex h-7 items-center gap-1 rounded-md border border-line px-2 text-[11px] font-medium hover:bg-surface-2"
+                      className="inline-flex min-h-9 items-center gap-1 rounded-md border border-ink/15 px-2.5 text-xs font-semibold hover:border-ink/40"
                     >
                       <BellRing className="h-3 w-3" aria-hidden /> Remind
                     </a>

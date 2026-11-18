@@ -3,49 +3,52 @@
 @tailwind utilities;
 
 /*
- * CircleSeal design tokens (shadcn/ui-style: semantic CSS variables, light + dark).
- * Brand: deep emerald (trust, money). Accent: receipt-stamp amber.
+ * CircleSeal design tokens.
+ * Direction: "security print". Cool cheque paper, intaglio navy ink, ledger green for money,
+ * official-stamp violet for anything co-signed or sealed. Dark mode is a navy vault.
  */
 :root {
-  --bg: #f6f7f6;
-  --surface: #ffffff;
-  --surface-2: #f1f3f2;
-  --ink: #0f1713;
-  --muted: #5b6760;
-  --line: #e3e7e4;
-  --brand: #0b7a55;
-  --brand-strong: #075e41;
+  --bg: #eef2ef;
+  --surface: #fbfcfa;
+  --surface-2: #e4eae6;
+  --ink: #0e1b2c;
+  --muted: #4f5d68;
+  --line: #cdd8d2;
+  --brand: #0a6b4e;
+  --brand-strong: #075a41;
   --brand-ink: #ffffff;
-  --brand-soft: #e6f4ee;
-  --stamp: #b86e0a;
-  --stamp-soft: #fdf3e2;
-  --ok: #15803d;
-  --bad: #c0362c;
-  --bad-soft: #fdecea;
-  --shadow: 0 1px 2px rgb(16 24 20 / 0.05), 0 1px 3px rgb(16 24 20 / 0.06);
-  --shadow-lg: 0 10px 30px -10px rgb(16 24 20 / 0.18), 0 2px 6px rgb(16 24 20 / 0.06);
+  --brand-soft: #d9ece3;
+  --stamp: #5b3cc4;
+  --stamp-soft: #e8e3fa;
+  --ok: #0f7a3f;
+  --bad: #b3261e;
+  --bad-soft: #fbe5e3;
+  --hatch: rgb(14 27 44 / 0.045);
+  --shadow: 0 1px 0 rgb(14 27 44 / 0.06), 0 1px 2px rgb(14 27 44 / 0.06);
+  --shadow-lg: 0 18px 40px -18px rgb(14 27 44 / 0.35), 0 2px 6px rgb(14 27 44 / 0.08);
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0a0f0d;
-    --surface: #111814;
-    --surface-2: #17201b;
-    --ink: #e8efeb;
-    --muted: #93a39a;
-    --line: #233029;
-    --brand: #34c38f;
-    --brand-strong: #5fd6a8;
-    --brand-ink: #04120c;
-    --brand-soft: #12301f;
-    --stamp: #f2b552;
-    --stamp-soft: #33260f;
-    --ok: #4ade80;
-    --bad: #ff8a80;
-    --bad-soft: #3a1714;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
-    --shadow-lg: 0 12px 32px -12px rgb(0 0 0 / 0.7);
+    --bg: #0a1220;
+    --surface: #101b2c;
+    --surface-2: #17243a;
+    --ink: #e7eeea;
+    --muted: #9aa9b8;
+    --line: #253650;
+    --brand: #43d19e;
+    --brand-strong: #6fe0b6;
+    --brand-ink: #04140e;
+    --brand-soft: #123528;
+    --stamp: #ac98ff;
+    --stamp-soft: #241d47;
+    --ok: #57dc8d;
+    --bad: #ff8f86;
+    --bad-soft: #3a1618;
+    --hatch: rgb(231 238 234 / 0.035);
+    --shadow: 0 1px 0 rgb(0 0 0 / 0.35);
+    --shadow-lg: 0 18px 40px -18px rgb(0 0 0 / 0.8);
     color-scheme: dark;
   }
 }
@@ -55,32 +58,39 @@ html {
 }
 
 body {
-  background: var(--bg);
+  background-color: var(--bg);
+  /* Cheque-paper hatching: two sets of hairlines, barely there. */
+  background-image:
+    repeating-linear-gradient(45deg, var(--hatch) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(-45deg, var(--hatch) 0 1px, transparent 1px 7px);
   color: var(--ink);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
-  font-feature-settings: "ss01", "cv11";
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-variation-settings: "wdth" 100;
+}
+
+/* Expanded, heavy cut of Archivo for headlines: the engraved look of banknotes and certificates. */
+.font-display {
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.font-wide {
+  font-variation-settings: "wdth" 118;
+}
+.font-narrow {
+  font-variation-settings: "wdth" 80;
 }
 
 :focus-visible {
-  outline: 2px solid var(--brand);
+  outline: 2px solid var(--stamp);
   outline-offset: 2px;
   border-radius: 6px;
 }
 
-/* Soft brand glow behind hero sections. */
-.hero-glow {
-  background:
-    radial-gradient(60% 60% at 15% 0%, color-mix(in srgb, var(--brand) 16%, transparent) 0%, transparent 70%),
-    radial-gradient(50% 50% at 95% 10%, color-mix(in srgb, var(--stamp) 12%, transparent) 0%, transparent 70%);
-}
-
-/* Faint grid texture for hero backgrounds. */
-.grid-texture {
-  background-image:
-    linear-gradient(to right, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px);
-  background-size: 32px 32px;
-  mask-image: radial-gradient(ellipse at top, black 30%, transparent 75%);
+::selection {
+  background: var(--stamp-soft);
+  color: var(--ink);
 }
 
 @keyframes spin {
@@ -89,13 +99,152 @@ body {
   }
 }
 
-/* ---------------------------------------------------------------- effects (components/fx.tsx) */
+/* ---------------------------------------------------------------- paper devices */
 
-/* Scroll reveal */
+/* Ruled ledger lines, like a passbook page. */
+.ruled {
+  background-image: linear-gradient(to bottom, transparent calc(100% - 1px), color-mix(in srgb, var(--brand) 22%, transparent) 0);
+  background-size: 100% 2.5rem;
+}
+
+/* Perforated top and bottom edges (a receipt torn from a book). Pair with a drop-shadow on a wrapper. */
+.perforated {
+  --r: 5px;
+  --gap: 15px;
+  -webkit-mask:
+    radial-gradient(var(--r) at 50% 0, #0000 97%, #000) 50% 0 / var(--gap) 51% repeat-x,
+    radial-gradient(var(--r) at 50% 100%, #0000 97%, #000) 50% 100% / var(--gap) 51% repeat-x;
+  mask:
+    radial-gradient(var(--r) at 50% 0, #0000 97%, #000) 50% 0 / var(--gap) 51% repeat-x,
+    radial-gradient(var(--r) at 50% 100%, #0000 97%, #000) 50% 100% / var(--gap) 51% repeat-x;
+}
+.paper-shadow {
+  filter: drop-shadow(0 1px 0 rgb(14 27 44 / 0.08)) drop-shadow(0 14px 24px rgb(14 27 44 / 0.16));
+}
+@media (prefers-color-scheme: dark) {
+  .paper-shadow {
+    filter: drop-shadow(0 14px 24px rgb(0 0 0 / 0.55));
+  }
+}
+
+/* Dashed tear line inside a receipt. */
+.tear {
+  background-image: linear-gradient(to right, var(--line) 50%, transparent 0);
+  background-size: 10px 1px;
+  background-repeat: repeat-x;
+  height: 1px;
+}
+
+/* Initials avatar that stays readable in both themes. */
+.avatar {
+  background: hsl(var(--h) 50% 90%);
+  color: hsl(var(--h) 60% 26%);
+}
+@media (prefers-color-scheme: dark) {
+  .avatar {
+    background: hsl(var(--h) 35% 22%);
+    color: hsl(var(--h) 70% 82%);
+  }
+}
+
+/* ---------------------------------------------------------------- the co-sign sequence */
+
+/* Signatures write themselves. Paths use pathLength="1". The resting state is fully drawn. */
+.sig-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.sig-play .sig-draw {
+  animation: sig 0.9s cubic-bezier(0.55, 0.1, 0.35, 1) both;
+  animation-delay: var(--sig-delay, 0s);
+}
+@keyframes sig {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+/* Check marks pop in after their signature. */
+.sig-play .sig-check {
+  animation: pop 0.35s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+  animation-delay: var(--sig-delay, 0s);
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+/* The rubber stamp comes down, overshoots, and settles at an angle. */
+.stamp-mark {
+  transform: rotate(var(--stamp-angle, -12deg));
+}
+.stamp-play .stamp-mark {
+  animation: stamp 0.55s cubic-bezier(0.2, 1.1, 0.35, 1) both;
+  animation-delay: var(--stamp-delay, 0s);
+}
+@keyframes stamp {
+  0% {
+    opacity: 0;
+    transform: scale(2.4) rotate(calc(var(--stamp-angle, -12deg) - 18deg));
+  }
+  55% {
+    opacity: 1;
+    transform: scale(0.92) rotate(var(--stamp-angle, -12deg));
+  }
+  100% {
+    transform: scale(1) rotate(var(--stamp-angle, -12deg));
+  }
+}
+/* The paper takes the hit. */
+.stamp-play .stamp-thud {
+  animation: thud 0.32s ease-out both;
+  animation-delay: calc(var(--stamp-delay, 0s) + 0.26s);
+}
+@keyframes thud {
+  40% {
+    transform: translateY(2px) scale(0.995);
+  }
+}
+/* Lines that print after the seal. */
+.stamp-play .print-in {
+  animation: print 0.5s steps(14, end) both;
+  animation-delay: calc(var(--stamp-delay, 0s) + 0.45s);
+}
+@keyframes print {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Slow turn for guilloché rosettes. */
+.rosette-turn {
+  animation: spin 120s linear infinite;
+  transform-origin: center;
+}
+
+/* ---------------------------------------------------------------- page + effects */
+
+/* Every route change: the new page slides up a few pixels, like a turned page settling. */
+.page-enter {
+  animation: page-in 0.38s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Scroll reveal (used sparingly) */
 .reveal {
   opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transform: translateY(14px);
+  transition: opacity 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .reveal-in {
   opacity: 1;
@@ -106,9 +255,12 @@ body {
     opacity: 1 !important;
     transform: none !important;
   }
+  body {
+    background-image: none;
+  }
 }
 
-/* Border beam: a conic-gradient ring masked to the border, rotating */
+/* Border beam (kept for API compatibility) */
 @property --beam-angle {
   syntax: "<angle>";
   initial-value: 0deg;
@@ -134,10 +286,10 @@ body {
 
 /* Marquee */
 .marquee {
-  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
 }
 .marquee-track {
-  animation: marquee 32s linear infinite;
+  animation: marquee 60s linear infinite;
 }
 .marquee-reverse {
   animation-direction: reverse;
@@ -162,106 +314,36 @@ body {
   }
 }
 
-/* Aurora background */
-.aurora-blob {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(70px);
-  opacity: 0.55;
-  animation: aurora 18s ease-in-out infinite alternate;
-}
-.aurora-a {
-  width: 46rem;
-  height: 30rem;
-  left: -12rem;
-  top: -10rem;
-  background: color-mix(in srgb, var(--brand) 38%, transparent);
-}
-.aurora-b {
-  width: 34rem;
-  height: 26rem;
-  right: -10rem;
-  top: -6rem;
-  background: color-mix(in srgb, var(--stamp) 30%, transparent);
-  animation-delay: -6s;
-}
-.aurora-c {
-  width: 30rem;
-  height: 22rem;
-  left: 35%;
-  top: 14rem;
-  background: color-mix(in srgb, #2dd4bf 22%, transparent);
-  animation-delay: -12s;
-}
-@keyframes aurora {
-  50% {
-    transform: translate(4rem, 2rem) scale(1.08);
-  }
-  100% {
-    transform: translate(-3rem, 3rem) scale(0.95);
-  }
-}
-
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(90deg, var(--brand), #14b8a6, var(--stamp), var(--brand));
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: gradient-pan 8s linear infinite;
-}
-@keyframes gradient-pan {
-  to {
-    background-position: 300% 0;
-  }
-}
-
-/* Glass surface */
-.glass {
-  background: color-mix(in srgb, var(--surface) 72%, transparent);
-  backdrop-filter: blur(14px) saturate(1.4);
-  -webkit-backdrop-filter: blur(14px) saturate(1.4);
-}
-
-/* Floating */
-.float-slow {
-  animation: float 7s ease-in-out infinite;
-}
-@keyframes float {
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-/* Dot pattern */
-.dot-pattern {
-  background-image: radial-gradient(color-mix(in srgb, var(--ink) 14%, transparent) 1px, transparent 1px);
-  background-size: 22px 22px;
-}
-
-/* Shimmer on primary CTAs */
-.shimmer {
-  position: relative;
-  overflow: hidden;
-}
-.shimmer::after {
+/* Live dot */
+.live-dot::after {
   content: "";
   position: absolute;
   inset: 0;
-  transform: translateX(-120%);
-  background: linear-gradient(100deg, transparent 20%, rgb(255 255 255 / 0.28) 50%, transparent 80%);
-  animation: shimmer 3.2s ease-in-out infinite;
+  border-radius: 9999px;
+  background: currentColor;
+  animation: live 2s ease-out infinite;
 }
-@keyframes shimmer {
-  60%,
-  100% {
-    transform: translateX(120%);
+@keyframes live {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.6);
   }
 }
 
+/* Outlined display text, for the names band. */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--ink);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     transition: none !important;
     animation: none !important;
   }
